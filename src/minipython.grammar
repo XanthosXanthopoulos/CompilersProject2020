@@ -89,7 +89,7 @@ Productions
 
     operation_assign = {op1} assign | {op2} minus_equal | {op3} div_equal;
 
-    expression = {exp1} [first]:expression operation [second]:expression
+    expression = {exp1} [first]:expression addition [second]:expression
                | {exp2} identifier l_br expression r_br
                | {exp3} function_call
                | {exp4} value
@@ -102,15 +102,22 @@ Productions
                | {exp11} l_br expression multi_expression* r_br;
 
     operation = {op1} plus | {op2} minus | {op3} mult | {op4} dmult | {op5}div | {op6}mod;
+	
+	
+	 multiplication = {something} number 
+					| {multiplication} multiplication mult number;
+   
+	addition = {multiplication} multiplication |
+			{addition} addition plus multiplication|
+			{subtraction} addition minus multiplication;
 
     multi_expression = comma expression;
 
-    comparison = {comp1} [first]:comparison operation_logical [second]:comparison
-               | {comp2} not comparison
-               | {comp3} [first]:expression comparison_symbol [second]:expression
-               | {comp4} true
-               | {comp5} false;
-
+    comparison = {comp1} [first_not]:not? [first_comp]:comparison operation_logical [second_not]:not? [second_comp]:comparison
+               | {comp2} [first]:expression comparison_symbol [second]:expression
+               | {comp3} true
+               | {comp4} false;   
+	
     operation_logical = {op1} and | {op2} or;
     comparison_symbol = {op1} greater | {op2} less | {op3} greater_equal | {op4} less_equal | {op5} not_equal | {op6} equal;
 
