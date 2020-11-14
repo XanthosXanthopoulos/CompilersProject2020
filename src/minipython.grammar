@@ -1,0 +1,127 @@
+Package minipython;
+
+Helpers
+    character = [0..127];
+
+    cr = 13;
+	lf = 10;
+	space = 32;
+	eol = lf | cr | cr lf;
+
+    letter = ['a' .. 'z'] | ['A' .. 'Z'] | '_';
+    digit = ['0' .. '9'];
+    not_eol = [character - [cr + lf]];
+    alphanumerical = letter | digit;
+
+
+Tokens
+    tab = 9;
+    number = digit+ | digit+ '.' digit+;
+    string = '"' not_eol* '"' | ''' not_eol* ''';
+    comment = '#' not_eol* eol;
+    id = letter alphanumerical*;
+    def = 'def';
+    plus = '+';
+    minus = '-';
+    mult = '*';
+    dmult = '**';
+    div = '/';
+    mod = '%';
+    logic_plus = '&&';
+    l_par = '(';
+    r_par = ')';
+    l_br = '[';
+    r_br = ']';
+    comma=',';
+    semi = ':';
+    equal = '==';
+    not_equal = '!=';
+    minus_equal = '-=';
+    div_equal = '/=';
+    less = '<';
+    greater = '>';
+    less_equal = '<=';
+    greater_equal = '>=';
+    true = 'true';
+    false = 'false';
+    not = 'not';
+    and = 'and';
+    or = 'or';
+    assign = '=';
+    open = 'open';
+    type = 'type';
+    max = 'max';
+    min = 'min';
+    if = 'if';
+    while = 'while';
+    for = 'for';
+    print = 'print';
+    return = 'return';
+    dot = '.';
+    assert = 'assert';
+    in = 'in';
+    none = 'None';
+
+Ignored Tokens
+    comment;
+
+Productions
+
+    goal = action*;
+    action =  {act1} function | {act2} statement;
+
+    function = def identifier l_par argument? r_par semi statement;
+
+    argument = identifier default_value? multi_argument*;
+
+    default_value = assign value;
+    multi_argument = comma identifier default_value?;
+
+    statement = {sta1} tab* if comparison semi statement
+              | {sta2} tab* while comparison semi statement
+              | {sta3} tab* for [first]:identifier in [second]:identifier semi statement
+              | {sta4} tab* return expression
+              | {sta5} tab* print expression multi_expression*
+              | {sta6} tab* identifier operation_assign expression
+              | {sta7} tab* identifier l_br [first]:expression r_br assign [second]:expression
+              | {sta8} tab* assert expression multi_expression?
+              | {sta9} tab* function_call;
+
+    operation_assign = {op1} assign | {op2} minus_equal | {op3} div_equal;
+
+    expression = {exp1} [first]:expression operation [second]:expression
+               | {exp2} identifier l_br expression r_br
+               | {exp3} function_call
+               | {exp4} value
+               | {exp5} identifier
+               | {exp6} open l_par [first]:expression comma [second]:expression r_par
+               | {exp7} type l_par identifier r_par
+               | {exp8} max l_par value multi_value+ r_par
+               | {exp9} min l_par value multi_value+ r_par
+               | {exp10} l_par expression r_par
+               | {exp11} l_br expression multi_expression* r_br;
+
+    operation = {op1} plus | {op2} minus | {op3} mult | {op4} dmult | {op5}div | {op6}mod;
+
+    multi_expression = comma expression;
+
+    comparison = {comp1} [first]:comparison operation_logical [second]:comparison
+               | {comp2} not comparison
+               | {comp3} [first]:expression comparison_symbol [second]:expression
+               | {comp4} true
+               | {comp5} false;
+
+    operation_logical = {op1} and | {op2} or;
+    comparison_symbol = {op1} greater | {op2} less | {op3} greater_equal | {op4} less_equal | {op5} not_equal | {op6} equal;
+
+    function_call = identifier l_par argument_list? r_par;
+    argument_list = expression multi_expression*;
+
+    value = {val1} identifier dot function_call
+          | {val2} number
+          | {val3} string
+          | {val4} none;
+
+    multi_value = comma value;
+
+    identifier = id;
