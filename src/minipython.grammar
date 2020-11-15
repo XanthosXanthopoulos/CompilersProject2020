@@ -19,12 +19,12 @@ Tokens
     number = digit+ | digit+ '.' digit+;
     string = '"' not_eol* '"' | ''' not_eol* ''';
     comment = '#' not_eol* eol;
-    id = letter alphanumerical*;
+    blank = space | lf | cr;
     def = 'def';
     plus = '+';
     minus = '-';
-    mult = '*';
     dmult = '**';
+    mult = '*';
     div = '/';
     mod = '%';
     logic_plus = '&&';
@@ -61,9 +61,10 @@ Tokens
     assert = 'assert';
     in = 'in';
     none = 'None';
+    id = letter alphanumerical*;
 
 Ignored Tokens
-    comment;
+    blank, comment;
 
 Productions
 
@@ -89,27 +90,38 @@ Productions
 
     operation_assign = {op1} assign | {op2} minus_equal | {op3} div_equal;
 
-    expression = {exp1} [first]:expression operation [second]:expression
-               | {exp2} identifier l_br expression r_br
-               | {exp3} function_call
-               | {exp4} value
-               | {exp5} identifier
-               | {exp6} open l_par [first]:expression comma [second]:expression r_par
-               | {exp7} type l_par identifier r_par
-               | {exp8} max l_par value multi_value+ r_par
-               | {exp9} min l_par value multi_value+ r_par
-               | {exp10} l_par expression r_par
-               | {exp11} l_br expression multi_expression* r_br;
+    expression = plus_minus_expression;
 
-    operation = {op1} plus | {op2} minus | {op3} mult | {op4} dmult | {op5}div | {op6}mod;
+    plus_minus_expression = {exp1} mult_div_expression
+                          | {exp2} plus_minus_expression plus mult_div_expression
+                          | {exp3} plus_minus_expression minus mult_div_expression;
+
+    mult_div_expression = {exp1} primary_expression
+                        | {exp2} mult_div_expression mult primary_expression
+                        | {exp3} mult_div_expression dmult primary_expression
+                        | {exp4} mult_div_expression div primary_expression
+                        | {exp5} mult_div_expression mod primary_expression;
+
+    primary_expression = {exp1} identifier
+                       | {exp2} identifier l_br expression r_br
+                       | {exp3} value
+                       | {exp4} function_call
+                       | {exp6} open l_par [first]:expression comma [second]:expression r_par
+                       | {exp7} type l_par identifier r_par
+                       | {exp8} max l_par value multi_value+ r_par
+                       | {exp9} min l_par value multi_value+ r_par
+                       | {exp10} l_par expression r_par
+                       | {exp11} l_br expression multi_expression* r_br;
 
     multi_expression = comma expression;
 
-    comparison = {comp1} [first]:comparison operation_logical [second]:comparison
-               | {comp2} not comparison
-               | {comp3} [first]:expression comparison_symbol [second]:expression
-               | {comp4} true
-               | {comp5} false;
+    comparison = {comp1} [first]:comparison operation_logical [second]:logical_expression
+               | {comp2} logical_expression;
+
+    logical_expression = {log1} not logical_expression
+                       | {log2} [first]:expression comparison_symbol [second]:expression
+                       | {log3} true
+                       | {log4} false;
 
     operation_logical = {op1} and | {op2} or;
     comparison_symbol = {op1} greater | {op2} less | {op3} greater_equal | {op4} less_equal | {op5} not_equal | {op6} equal;

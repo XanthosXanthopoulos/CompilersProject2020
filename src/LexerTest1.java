@@ -15,8 +15,12 @@ public class LexerTest1
 
       Token token = lexer.next();
       while ( ! token.getText().equals("") )
-      { 
-        System.out.print(token);
+      {
+        if (!token.getText().equals(" "))
+        {
+          System.out.println(token + " " + token.getClass());
+        }
+
         token = lexer.next(); 
       }
     }
