@@ -96,11 +96,13 @@ Productions
                           | {exp2} plus_minus_expression plus mult_div_expression
                           | {exp3} plus_minus_expression minus mult_div_expression;
 
-    mult_div_expression = {exp1} primary_expression
-                        | {exp2} mult_div_expression mult primary_expression
-                        | {exp3} mult_div_expression dmult primary_expression
-                        | {exp4} mult_div_expression div primary_expression
-                        | {exp5} mult_div_expression mod primary_expression;
+    mult_div_expression = {exp1} double_mult_expression
+                        | {exp2} mult_div_expression mult double_mult_expression
+                        | {exp3} mult_div_expression div double_mult_expression
+                        | {exp4} mult_div_expression mod double_mult_expression;
+
+	double_mult_expression = {exp1} primary_expression
+							|{exp2} double_mult_expression dmult primary_expression;
 
     primary_expression = {exp1} identifier
                        | {exp2} identifier l_br expression r_br
