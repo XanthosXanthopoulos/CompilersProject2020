@@ -1127,24 +1127,4 @@ public class DepthFirstAdapter extends AnalysisAdapter
         inANoneValue(node);
         outANoneValue(node);
     }
-
-    public void inAIdentifier(AIdentifier node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAIdentifier(AIdentifier node)
-    {
-        defaultOut(node);
-    }
-
-    public void caseAIdentifier(AIdentifier node)
-    {
-        inAIdentifier(node);
-        if(node.getId() != null)
-        {
-            node.getId().apply(this);
-        }
-        outAIdentifier(node);
-    }
 }

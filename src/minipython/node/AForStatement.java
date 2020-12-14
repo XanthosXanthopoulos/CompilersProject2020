@@ -7,8 +7,8 @@ import minipython.analysis.*;
 
 public final class AForStatement extends PStatement
 {
-    private PIdentifier _first_;
-    private PIdentifier _second_;
+    private TIdentifier _first_;
+    private TIdentifier _second_;
     private PStatement _statement_;
 
     public AForStatement()
@@ -16,8 +16,8 @@ public final class AForStatement extends PStatement
     }
 
     public AForStatement(
-        PIdentifier _first_,
-        PIdentifier _second_,
+        TIdentifier _first_,
+        TIdentifier _second_,
         PStatement _statement_)
     {
         setFirst(_first_);
@@ -30,8 +30,8 @@ public final class AForStatement extends PStatement
     public Object clone()
     {
         return new AForStatement(
-            (PIdentifier) cloneNode(_first_),
-            (PIdentifier) cloneNode(_second_),
+            (TIdentifier) cloneNode(_first_),
+            (TIdentifier) cloneNode(_second_),
             (PStatement) cloneNode(_statement_));
     }
 
@@ -40,12 +40,12 @@ public final class AForStatement extends PStatement
         ((Analysis) sw).caseAForStatement(this);
     }
 
-    public PIdentifier getFirst()
+    public TIdentifier getFirst()
     {
         return _first_;
     }
 
-    public void setFirst(PIdentifier node)
+    public void setFirst(TIdentifier node)
     {
         if(_first_ != null)
         {
@@ -65,12 +65,12 @@ public final class AForStatement extends PStatement
         _first_ = node;
     }
 
-    public PIdentifier getSecond()
+    public TIdentifier getSecond()
     {
         return _second_;
     }
 
-    public void setSecond(PIdentifier node)
+    public void setSecond(TIdentifier node)
     {
         if(_second_ != null)
         {
@@ -149,13 +149,13 @@ public final class AForStatement extends PStatement
     {
         if(_first_ == oldChild)
         {
-            setFirst((PIdentifier) newChild);
+            setFirst((TIdentifier) newChild);
             return;
         }
 
         if(_second_ == oldChild)
         {
-            setSecond((PIdentifier) newChild);
+            setSecond((TIdentifier) newChild);
             return;
         }
 

@@ -7,7 +7,7 @@ import minipython.analysis.*;
 
 public final class AAssignStatement extends PStatement
 {
-    private PIdentifier _identifier_;
+    private TIdentifier _identifier_;
     private POperationAssign _operationAssign_;
     private PExpression _expression_;
 
@@ -16,7 +16,7 @@ public final class AAssignStatement extends PStatement
     }
 
     public AAssignStatement(
-        PIdentifier _identifier_,
+        TIdentifier _identifier_,
         POperationAssign _operationAssign_,
         PExpression _expression_)
     {
@@ -30,7 +30,7 @@ public final class AAssignStatement extends PStatement
     public Object clone()
     {
         return new AAssignStatement(
-            (PIdentifier) cloneNode(_identifier_),
+            (TIdentifier) cloneNode(_identifier_),
             (POperationAssign) cloneNode(_operationAssign_),
             (PExpression) cloneNode(_expression_));
     }
@@ -40,12 +40,12 @@ public final class AAssignStatement extends PStatement
         ((Analysis) sw).caseAAssignStatement(this);
     }
 
-    public PIdentifier getIdentifier()
+    public TIdentifier getIdentifier()
     {
         return _identifier_;
     }
 
-    public void setIdentifier(PIdentifier node)
+    public void setIdentifier(TIdentifier node)
     {
         if(_identifier_ != null)
         {
@@ -149,7 +149,7 @@ public final class AAssignStatement extends PStatement
     {
         if(_identifier_ == oldChild)
         {
-            setIdentifier((PIdentifier) newChild);
+            setIdentifier((TIdentifier) newChild);
             return;
         }
 

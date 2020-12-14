@@ -7,14 +7,14 @@ import minipython.analysis.*;
 
 public final class ATypeExpression extends PExpression
 {
-    private PIdentifier _identifier_;
+    private TIdentifier _identifier_;
 
     public ATypeExpression()
     {
     }
 
     public ATypeExpression(
-        PIdentifier _identifier_)
+        TIdentifier _identifier_)
     {
         setIdentifier(_identifier_);
 
@@ -22,7 +22,7 @@ public final class ATypeExpression extends PExpression
     public Object clone()
     {
         return new ATypeExpression(
-            (PIdentifier) cloneNode(_identifier_));
+            (TIdentifier) cloneNode(_identifier_));
     }
 
     public void apply(Switch sw)
@@ -30,12 +30,12 @@ public final class ATypeExpression extends PExpression
         ((Analysis) sw).caseATypeExpression(this);
     }
 
-    public PIdentifier getIdentifier()
+    public TIdentifier getIdentifier()
     {
         return _identifier_;
     }
 
-    public void setIdentifier(PIdentifier node)
+    public void setIdentifier(TIdentifier node)
     {
         if(_identifier_ != null)
         {
@@ -75,7 +75,7 @@ public final class ATypeExpression extends PExpression
     {
         if(_identifier_ == oldChild)
         {
-            setIdentifier((PIdentifier) newChild);
+            setIdentifier((TIdentifier) newChild);
             return;
         }
 

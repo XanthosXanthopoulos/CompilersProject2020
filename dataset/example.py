@@ -15,3 +15,7 @@ def funcwithdef(name,university="aueb"):
 
 c = a / b + x[func(a + (b * -200 + 1) ** (c + 2 * x))] ** c + dd.name()
 
+while a < b and not false:
+print a
+
+x = a + 4**f(c)

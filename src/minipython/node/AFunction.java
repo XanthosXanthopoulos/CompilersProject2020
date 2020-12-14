@@ -7,7 +7,7 @@ import minipython.analysis.*;
 
 public final class AFunction extends PFunction
 {
-    private PIdentifier _identifier_;
+    private TIdentifier _identifier_;
     private final LinkedList _argument_ = new TypedLinkedList(new Argument_Cast());
     private PStatement _statement_;
 
@@ -16,7 +16,7 @@ public final class AFunction extends PFunction
     }
 
     public AFunction(
-        PIdentifier _identifier_,
+        TIdentifier _identifier_,
         List _argument_,
         PStatement _statement_)
     {
@@ -33,7 +33,7 @@ public final class AFunction extends PFunction
     public Object clone()
     {
         return new AFunction(
-            (PIdentifier) cloneNode(_identifier_),
+            (TIdentifier) cloneNode(_identifier_),
             cloneList(_argument_),
             (PStatement) cloneNode(_statement_));
     }
@@ -43,12 +43,12 @@ public final class AFunction extends PFunction
         ((Analysis) sw).caseAFunction(this);
     }
 
-    public PIdentifier getIdentifier()
+    public TIdentifier getIdentifier()
     {
         return _identifier_;
     }
 
-    public void setIdentifier(PIdentifier node)
+    public void setIdentifier(TIdentifier node)
     {
         if(_identifier_ != null)
         {
@@ -137,7 +137,7 @@ public final class AFunction extends PFunction
     {
         if(_identifier_ == oldChild)
         {
-            setIdentifier((PIdentifier) newChild);
+            setIdentifier((TIdentifier) newChild);
             return;
         }
 

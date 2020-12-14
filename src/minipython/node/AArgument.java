@@ -7,7 +7,7 @@ import minipython.analysis.*;
 
 public final class AArgument extends PArgument
 {
-    private PIdentifier _identifier_;
+    private TIdentifier _identifier_;
     private final LinkedList _value_ = new TypedLinkedList(new Value_Cast());
 
     public AArgument()
@@ -15,7 +15,7 @@ public final class AArgument extends PArgument
     }
 
     public AArgument(
-        PIdentifier _identifier_,
+        TIdentifier _identifier_,
         List _value_)
     {
         setIdentifier(_identifier_);
@@ -29,7 +29,7 @@ public final class AArgument extends PArgument
     public Object clone()
     {
         return new AArgument(
-            (PIdentifier) cloneNode(_identifier_),
+            (TIdentifier) cloneNode(_identifier_),
             cloneList(_value_));
     }
 
@@ -38,12 +38,12 @@ public final class AArgument extends PArgument
         ((Analysis) sw).caseAArgument(this);
     }
 
-    public PIdentifier getIdentifier()
+    public TIdentifier getIdentifier()
     {
         return _identifier_;
     }
 
-    public void setIdentifier(PIdentifier node)
+    public void setIdentifier(TIdentifier node)
     {
         if(_identifier_ != null)
         {
@@ -100,7 +100,7 @@ public final class AArgument extends PArgument
     {
         if(_identifier_ == oldChild)
         {
-            setIdentifier((PIdentifier) newChild);
+            setIdentifier((TIdentifier) newChild);
             return;
         }
 

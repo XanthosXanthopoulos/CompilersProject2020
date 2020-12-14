@@ -323,11 +323,6 @@ public class AnalysisAdapter implements Analysis
         defaultCase(node);
     }
 
-    public void caseAIdentifier(AIdentifier node)
-    {
-        defaultCase(node);
-    }
-
     public void caseTTab(TTab node)
     {
         defaultCase(node);
@@ -558,7 +553,7 @@ public class AnalysisAdapter implements Analysis
         defaultCase(node);
     }
 
-    public void caseTId(TId node)
+    public void caseTIdentifier(TIdentifier node)
     {
         defaultCase(node);
     }

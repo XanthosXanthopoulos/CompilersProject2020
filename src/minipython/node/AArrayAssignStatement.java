@@ -7,7 +7,7 @@ import minipython.analysis.*;
 
 public final class AArrayAssignStatement extends PStatement
 {
-    private PIdentifier _identifier_;
+    private TIdentifier _identifier_;
     private PExpression _first_;
     private PExpression _second_;
 
@@ -16,7 +16,7 @@ public final class AArrayAssignStatement extends PStatement
     }
 
     public AArrayAssignStatement(
-        PIdentifier _identifier_,
+        TIdentifier _identifier_,
         PExpression _first_,
         PExpression _second_)
     {
@@ -30,7 +30,7 @@ public final class AArrayAssignStatement extends PStatement
     public Object clone()
     {
         return new AArrayAssignStatement(
-            (PIdentifier) cloneNode(_identifier_),
+            (TIdentifier) cloneNode(_identifier_),
             (PExpression) cloneNode(_first_),
             (PExpression) cloneNode(_second_));
     }
@@ -40,12 +40,12 @@ public final class AArrayAssignStatement extends PStatement
         ((Analysis) sw).caseAArrayAssignStatement(this);
     }
 
-    public PIdentifier getIdentifier()
+    public TIdentifier getIdentifier()
     {
         return _identifier_;
     }
 
-    public void setIdentifier(PIdentifier node)
+    public void setIdentifier(TIdentifier node)
     {
         if(_identifier_ != null)
         {
@@ -149,7 +149,7 @@ public final class AArrayAssignStatement extends PStatement
     {
         if(_identifier_ == oldChild)
         {
-            setIdentifier((PIdentifier) newChild);
+            setIdentifier((TIdentifier) newChild);
             return;
         }
 

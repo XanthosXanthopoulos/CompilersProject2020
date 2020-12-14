@@ -7,7 +7,7 @@ import minipython.analysis.*;
 
 public final class AArrayAccessExpression extends PExpression
 {
-    private PIdentifier _identifier_;
+    private TIdentifier _identifier_;
     private PExpression _expression_;
 
     public AArrayAccessExpression()
@@ -15,7 +15,7 @@ public final class AArrayAccessExpression extends PExpression
     }
 
     public AArrayAccessExpression(
-        PIdentifier _identifier_,
+        TIdentifier _identifier_,
         PExpression _expression_)
     {
         setIdentifier(_identifier_);
@@ -26,7 +26,7 @@ public final class AArrayAccessExpression extends PExpression
     public Object clone()
     {
         return new AArrayAccessExpression(
-            (PIdentifier) cloneNode(_identifier_),
+            (TIdentifier) cloneNode(_identifier_),
             (PExpression) cloneNode(_expression_));
     }
 
@@ -35,12 +35,12 @@ public final class AArrayAccessExpression extends PExpression
         ((Analysis) sw).caseAArrayAccessExpression(this);
     }
 
-    public PIdentifier getIdentifier()
+    public TIdentifier getIdentifier()
     {
         return _identifier_;
     }
 
-    public void setIdentifier(PIdentifier node)
+    public void setIdentifier(TIdentifier node)
     {
         if(_identifier_ != null)
         {
@@ -112,7 +112,7 @@ public final class AArrayAccessExpression extends PExpression
     {
         if(_identifier_ == oldChild)
         {
-            setIdentifier((PIdentifier) newChild);
+            setIdentifier((TIdentifier) newChild);
             return;
         }
 

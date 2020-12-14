@@ -229,7 +229,7 @@ class TokenIndex extends AnalysisAdapter
         index = 43;
     }
 
-    public void caseTId(TId node)
+    public void caseTIdentifier(TIdentifier node)
     {
         index = 44;
     }

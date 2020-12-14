@@ -747,7 +747,7 @@ public class Lexer
     Token new43(int line, int pos) { return new TAssert(line, pos); }
     Token new44(int line, int pos) { return new TIn(line, pos); }
     Token new45(int line, int pos) { return new TNone(line, pos); }
-    Token new46(String text, int line, int pos) { return new TId(text, line, pos); }
+    Token new46(String text, int line, int pos) { return new TIdentifier(text, line, pos); }
 
     private int getChar() throws IOException
     {

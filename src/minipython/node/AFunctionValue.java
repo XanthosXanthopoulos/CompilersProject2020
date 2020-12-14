@@ -7,7 +7,7 @@ import minipython.analysis.*;
 
 public final class AFunctionValue extends PValue
 {
-    private PIdentifier _identifier_;
+    private TIdentifier _identifier_;
     private PFunctionCall _functionCall_;
 
     public AFunctionValue()
@@ -15,7 +15,7 @@ public final class AFunctionValue extends PValue
     }
 
     public AFunctionValue(
-        PIdentifier _identifier_,
+        TIdentifier _identifier_,
         PFunctionCall _functionCall_)
     {
         setIdentifier(_identifier_);
@@ -26,7 +26,7 @@ public final class AFunctionValue extends PValue
     public Object clone()
     {
         return new AFunctionValue(
-            (PIdentifier) cloneNode(_identifier_),
+            (TIdentifier) cloneNode(_identifier_),
             (PFunctionCall) cloneNode(_functionCall_));
     }
 
@@ -35,12 +35,12 @@ public final class AFunctionValue extends PValue
         ((Analysis) sw).caseAFunctionValue(this);
     }
 
-    public PIdentifier getIdentifier()
+    public TIdentifier getIdentifier()
     {
         return _identifier_;
     }
 
-    public void setIdentifier(PIdentifier node)
+    public void setIdentifier(TIdentifier node)
     {
         if(_identifier_ != null)
         {
@@ -112,7 +112,7 @@ public final class AFunctionValue extends PValue
     {
         if(_identifier_ == oldChild)
         {
-            setIdentifier((PIdentifier) newChild);
+            setIdentifier((TIdentifier) newChild);
             return;
         }
 
