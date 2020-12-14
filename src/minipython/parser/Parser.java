@@ -2116,7 +2116,7 @@ public class Parser
         pcomparisonNode2 = (PComparison)nodeArrayList1.get(0);
         {
 
-        poperationlogicalNode3 = new AAndOperationLogical();
+        poperationlogicalNode3 = new AOrOperationLogical();
         }
         pcomparisonNode4 = (PComparison)nodeArrayList3.get(0);
 
@@ -2169,7 +2169,7 @@ public class Parser
         pcomparisonNode2 = (PComparison)nodeArrayList1.get(0);
         {
 
-        poperationlogicalNode3 = new AOrOperationLogical();
+        poperationlogicalNode3 = new AAndOperationLogical();
         }
         pcomparisonNode4 = (PComparison)nodeArrayList3.get(0);
 
@@ -2847,8 +2847,8 @@ public class Parser
 			{{-1, REDUCE, 38}, {6, SHIFT, 86}, },
 			{{-1, REDUCE, 40}, },
 			{{-1, REDUCE, 11}, },
-			{{-1, REDUCE, 53}, },
 			{{-1, REDUCE, 56}, },
+			{{-1, REDUCE, 53}, },
 			{{-1, ERROR, 130}, {4, SHIFT, 74}, {5, SHIFT, 75}, {14, SHIFT, 155}, },
 			{{-1, REDUCE, 71}, },
 			{{-1, ERROR, 132}, {11, SHIFT, 48}, },

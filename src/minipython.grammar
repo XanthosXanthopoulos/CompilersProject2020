@@ -124,11 +124,11 @@ Productions
     expression_list{->expression*} = {single} expression{-> [expression]}
                                    | {multiple} expression_list comma expression{-> [expression_list.expression expression.expression]};
 
-    comparison = {comp1} [first]:comparison and [second]:logical_expression{-> New comparison.log_op(first, New operation_logical.and(), second.comparison)}
-               | {comp2} or_comparison{-> or_comparison.comparison};
+    comparison = {comp1} [first]:comparison or [second]:logical_expression{-> New comparison.log_op(first, New operation_logical.or(), second.comparison)}
+               | {comp2} and_comparison{-> and_comparison.comparison};
 
-    or_comparison{-> comparison} = {comp1} logical_expression{-> logical_expression.comparison}
-                                 | {comp2} [first]:comparison or [second]:logical_expression{-> New comparison.log_op(first, New operation_logical.or(), second.comparison)};
+    and_comparison{-> comparison} = {comp1} logical_expression{-> logical_expression.comparison}
+                                 | {comp2} [first]:comparison and [second]:logical_expression{-> New comparison.log_op(first, New operation_logical.and(), second.comparison)};
 
     logical_expression{-> comparison} = {log1} not logical_expression{-> New comparison.not(logical_expression.comparison)}
                                       | {log2} [first]:expression comparison_symbol [second]:expression{-> New comparison.compare(first, comparison_symbol, second)}
