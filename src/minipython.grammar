@@ -1,3 +1,7 @@
+//Aγγελικη Aλεστα 3130251
+//Γιωργος Σταθοπουλος 3170152
+//Ξάνθος Ξανθόπουλος 3170125
+
 Package minipython;
 
 Helpers
@@ -68,74 +72,143 @@ Ignored Tokens
 
 Productions
 
+    goal = action*{-> New goal([action])};
+    action =  {act1} function{-> New action.function(function)} | {act2} statement{-> New action.statement(statement)};
+
+    function = def identifier l_par argument_list? r_par semi statement{-> New function(identifier, [argument_list.argument], statement)};
+
+    argument_list{->argument*} = {single} argument{-> [argument]}
+                               | {multiple} argument_list comma argument{-> [argument_list.argument argument]};
+
+    argument = identifier default_value?{-> New argument(identifier, [default_value.value])};
+
+    default_value{-> value} = assign value{-> value};
+
+    statement = {sta1} tab* if comparison semi statement{-> New statement.if(comparison, statement)}
+              | {sta2} tab* while comparison semi statement{-> New statement.while(comparison, statement)}
+              | {sta3} tab* for [first]:identifier in [second]:identifier semi statement{-> New statement.for(first, second, statement)}
+              | {sta4} tab* return expression{-> New statement.return(expression)}
+              | {sta5} tab* print expression_list{-> New statement.print([expression_list.expression])}
+              | {sta6} tab* identifier operation_assign expression{-> New statement.assign(identifier, operation_assign, expression)}
+              | {sta7} tab* identifier l_br [first]:expression r_br assign [second]:expression{-> New statement.array_assign(identifier, first, second)}
+              | {sta8} tab* assert expression_list{-> New statement.assert([expression_list.expression])}
+              | {sta9} tab* function_call{-> New statement.function(function_call)};
+
+    operation_assign = {op1} assign{-> New operation_assign.assign()}
+                     | {op2} minus_equal{-> New operation_assign.minus_assign()}
+                     | {op3} div_equal{-> New operation_assign.div_assign()};
+
+    expression = {exp1} mult_div_expression{-> mult_div_expression.expression}
+               | {exp2} expression plus mult_div_expression{-> New expression.add(expression, mult_div_expression.expression)}
+               | {exp3} expression minus mult_div_expression{-> New expression.minus(expression, mult_div_expression.expression)};
+
+    mult_div_expression{-> expression} = {exp1} double_mult_expression{-> double_mult_expression.expression}
+                                       | {exp2} mult_div_expression mult double_mult_expression{-> New expression.mult(mult_div_expression.expression, double_mult_expression.expression)}
+                                       | {exp3} mult_div_expression div double_mult_expression{-> New expression.div(mult_div_expression.expression, double_mult_expression.expression)}
+                                       | {exp4} mult_div_expression mod double_mult_expression{-> New expression.mod(mult_div_expression.expression, double_mult_expression.expression)};
+
+	double_mult_expression{-> expression} = {exp1} primary_expression{-> primary_expression.expression}
+							              |{exp2} double_mult_expression dmult primary_expression{-> New expression.pow(double_mult_expression.expression, primary_expression.expression)};
+
+    primary_expression{-> expression} = {exp1} identifier{-> New expression.id(identifier)}
+                                      | {exp2} identifier l_br expression r_br{-> New expression.array_access(identifier, expression)}
+                                      | {exp3} value{-> New expression.value(value)}
+                                      | {exp4} function_call{-> New expression.func_call(function_call)}
+                                      | {exp6} open l_par [first]:expression comma [second]:expression r_par{-> New expression.open(first, second)}
+                                      | {exp7} type l_par identifier r_par{-> New expression.type(identifier)}
+                                      | {exp8} max l_par value_list r_par{-> New expression.max([value_list.value])}
+                                      | {exp9} min l_par value_list r_par{-> New expression.min([value_list.value])}
+                                      | {exp10} l_par expression r_par{-> New expression.par(expression)}
+                                      | {exp11} l_br arg_list r_br{-> New expression.array([arg_list.expression])};
+
+    expression_list{->expression*} = {single} expression{-> [expression]}
+                                   | {multiple} expression_list comma expression{-> [expression_list.expression expression.expression]};
+
+    comparison = {comp1} [first]:comparison and [second]:logical_expression{-> New comparison.log_op(first, New operation_logical.and(), second.comparison)}
+               | {comp2} or_comparison{-> or_comparison.comparison};
+
+    or_comparison{-> comparison} = {comp1} logical_expression{-> logical_expression.comparison}
+                                 | {comp2} [first]:comparison or [second]:logical_expression{-> New comparison.log_op(first, New operation_logical.or(), second.comparison)};
+
+    logical_expression{-> comparison} = {log1} not logical_expression{-> New comparison.not(logical_expression.comparison)}
+                                      | {log2} [first]:expression comparison_symbol [second]:expression{-> New comparison.compare(first, comparison_symbol, second)}
+                                      | {log3} true{-> New comparison.true()}
+                                      | {log4} false{-> New comparison.false()};
+
+    comparison_symbol = {op1} greater{-> New comparison_symbol.grt()}
+                      | {op2} less{-> New comparison_symbol.less()}
+                      | {op3} greater_equal{-> New comparison_symbol.grt_eq()}
+                      | {op4} less_equal{-> New comparison_symbol.less_eq()}
+                      | {op5} not_equal{-> New comparison_symbol.n_eq()}
+                      | {op6} equal{-> New comparison_symbol.eq()};
+
+    function_call = identifier l_par arg_list? r_par{-> New function_call(identifier, [arg_list.expression])};
+
+    arg_list{->expression*} = {single} expression{-> [expression]}
+                            | {multiple} expression comma arg_list{-> [expression arg_list.expression]};
+
+    value = {val1} identifier dot function_call{-> New value.function(identifier, function_call)}
+          | {val2} minus? number{-> New value.number(minus, number)}
+          | {val3} string{-> New value.string(string)}
+          | {val4} none{-> New value.none()};
+
+    value_list{->value*} = {dual} [first]:value comma [second]:value{-> [first second]}
+                         | {multiple} value_list comma value{-> [value_list.value value]};
+
+    identifier = id{-> New identifier(id)};
+
+Abstract Syntax Tree
+
     goal = action*;
-    action =  {act1} function | {act2} statement;
+    action =  {function} function | {statement} statement;
 
-    function = def identifier l_par argument? r_par semi statement;
+    function = identifier argument* statement;
 
-    argument = identifier default_value? multi_argument*;
+    argument = identifier value*;
 
-    default_value = assign value;
-    multi_argument = comma identifier default_value?;
+    statement = {if} comparison statement
+              | {while} comparison statement
+              | {for} [first]:identifier [second]:identifier statement
+              | {return} expression
+              | {print} expression*
+              | {assign} identifier operation_assign expression
+              | {array_assign} identifier [first]:expression [second]:expression
+              | {assert} expression*
+              | {function} function_call;
 
-    statement = {sta1} tab* if comparison semi statement
-              | {sta2} tab* while comparison semi statement
-              | {sta3} tab* for [first]:identifier in [second]:identifier semi statement
-              | {sta4} tab* return expression
-              | {sta5} tab* print expression multi_expression*
-              | {sta6} tab* identifier operation_assign expression
-              | {sta7} tab* identifier l_br [first]:expression r_br assign [second]:expression
-              | {sta8} tab* assert expression multi_expression?
-              | {sta9} tab* function_call;
+    operation_assign = {assign} | {minus_assign} | {div_assign};
 
-    operation_assign = {op1} assign | {op2} minus_equal | {op3} div_equal;
+    expression = {id} identifier
+               | {array_access} identifier expression
+               | {value} value
+               | {func_call} function_call
+               | {open} [first]:expression [second]:expression
+               | {type} identifier
+               | {min} value*
+               | {max} value*
+               | {par} expression
+               | {array} expression*
+               | {add} [first]:expression [second]:expression
+               | {minus} [first]:expression [second]:expression
+               | {mult} [first]:expression [second]:expression
+               | {div} [first]:expression [second]:expression
+               | {mod} [first]:expression [second]:expression
+               | {pow} [first]:expression [second]:expression;
 
-    expression = plus_minus_expression;
+    comparison = {log_op} [first]:comparison operation_logical [second]:comparison
+               | {not} comparison
+               | {compare} [first]:expression comparison_symbol [second]:expression
+               | {true}
+               | {false};
 
-    plus_minus_expression = {exp1} mult_div_expression
-                          | {exp2} plus_minus_expression plus mult_div_expression
-                          | {exp3} plus_minus_expression minus mult_div_expression;
+    operation_logical = {and} | {or};
+    comparison_symbol = {grt} | {less} | {grt_eq} | {less_eq} | {n_eq} | {eq};
 
-    mult_div_expression = {exp1} double_mult_expression
-                        | {exp2} mult_div_expression mult double_mult_expression
-                        | {exp3} mult_div_expression div double_mult_expression
-                        | {exp4} mult_div_expression mod double_mult_expression;
+    function_call = identifier expression*;
 
-	double_mult_expression = {exp1} primary_expression
-							|{exp2} double_mult_expression dmult primary_expression;
-
-    primary_expression = {exp1} identifier
-                       | {exp2} identifier l_br expression r_br
-                       | {exp3} value
-                       | {exp4} function_call
-                       | {exp6} open l_par [first]:expression comma [second]:expression r_par
-                       | {exp7} type l_par identifier r_par
-                       | {exp8} max l_par value multi_value+ r_par
-                       | {exp9} min l_par value multi_value+ r_par
-                       | {exp10} l_par expression r_par
-                       | {exp11} l_br expression multi_expression* r_br;
-
-    multi_expression = comma expression;
-
-    comparison = {comp1} [first]:comparison operation_logical [second]:logical_expression
-               | {comp2} logical_expression;
-
-    logical_expression = {log1} not logical_expression
-                       | {log2} [first]:expression comparison_symbol [second]:expression
-                       | {log3} true
-                       | {log4} false;
-
-    operation_logical = {op1} and | {op2} or;
-    comparison_symbol = {op1} greater | {op2} less | {op3} greater_equal | {op4} less_equal | {op5} not_equal | {op6} equal;
-
-    function_call = identifier l_par argument_list? r_par;
-    argument_list = expression multi_expression*;
-
-    value = {val1} identifier dot function_call
-          | {val2} number
-          | {val3} string
-          | {val4} none;
-
-    multi_value = comma value;
+    value = {function} identifier function_call
+          | {number} minus? number
+          | {string} string
+          | {none};
 
     identifier = id;
