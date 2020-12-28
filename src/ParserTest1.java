@@ -17,7 +17,11 @@ public class ParserTest1
 
       Start ast = parser.parse();
 
-      System.out.println(ast);
+      SymbolTable symbolTable = new SymbolTable();
+
+      ast.apply(new FirstAdapter(symbolTable));
+
+      //System.out.println(ast);
     }
     catch (Exception e)
     {

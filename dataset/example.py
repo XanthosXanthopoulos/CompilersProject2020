@@ -19,3 +19,9 @@ while a < b and not false:
 print a
 
 x = a + 4**f(c)
+
+def func(name) :
+    if a > b :
+        return 0
+
+        return 0
