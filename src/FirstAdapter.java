@@ -1,15 +1,21 @@
 import minipython.node.*;
 import minipython.analysis.*;
 
+import java.util.ArrayList;
+
 public class FirstAdapter extends DepthFirstAdapter
 {
-    private SymbolTable symbolTable;
+    private Positions positions;
+    private HierarchicalSymbolTable hierarchicalSymbolTable;
+    private String scopeID;
 
     private int errors;
 
-    public FirstAdapter(SymbolTable symbolTable)
+    public FirstAdapter(Positions positions, HierarchicalSymbolTable hierarchicalSymbolTable)
     {
-        this.symbolTable = symbolTable;
+        this.positions = positions;
+        this.hierarchicalSymbolTable = hierarchicalSymbolTable;
+        scopeID = "global";
         errors = 0;
     }
 
@@ -21,14 +27,14 @@ public class FirstAdapter extends DepthFirstAdapter
         String variableName = identifier.getText().trim();
 
         Variable variable;
-        if (symbolTable.contains(variableName))
+        if (hierarchicalSymbolTable.containsVariable(variableName, scopeID))
         {
-            variable = symbolTable.getVariable(variableName);
+            variable = hierarchicalSymbolTable.getVariable(variableName, scopeID);
         }
         else
         {
-            variable = new Variable(Variable.Type.NA, variableName, identifier.getPos());
-            symbolTable.addVariable(variable);
+            variable = new Variable(Variable.Type.NA, variableName, identifier.getLine());
+            hierarchicalSymbolTable.addVariable(variable, scopeID);
         }
 
         PExpression expression = node.getExpression();
@@ -58,9 +64,9 @@ public class FirstAdapter extends DepthFirstAdapter
                     String functionName = ((AFunctionCall) functionCall).getIdentifier().getText().trim();
                     int arguments = ((AFunctionCall) functionCall).getExpression().size();
 
-                    if (symbolTable.contains(functionName, arguments))
+                    if (hierarchicalSymbolTable.containsFunction(functionName, arguments))
                     {
-                        variable.setType(symbolTable.getFunction(functionName, arguments).getReturnType());
+                        variable.setType(hierarchicalSymbolTable.getFunction(functionName, arguments).getReturnType());
                     }
                 }
             }
@@ -71,9 +77,9 @@ public class FirstAdapter extends DepthFirstAdapter
         }
         else if (expression instanceof AIdExpression)
         {
-            if (symbolTable.contains(((AIdExpression) expression).getIdentifier().getText().trim()))
+            if (hierarchicalSymbolTable.containsVariable(((AIdExpression) expression).getIdentifier().getText().trim(), scopeID))
             {
-                variable.setType(symbolTable.getVariable(((AIdExpression) expression).getIdentifier().getText().trim()).getType());
+                variable.setType(hierarchicalSymbolTable.getVariable(((AIdExpression) expression).getIdentifier().getText().trim(), scopeID).getType());
             }
         }
     }
@@ -87,12 +93,15 @@ public class FirstAdapter extends DepthFirstAdapter
         TIdentifier identifier = node.getIdentifier();
 
         function.setName(identifier.getText().trim());
-        function.setPosition(identifier.getPos());
+        function.setPosition(identifier.getLine());
         function.setReturnType(Variable.Type.NONE);
+
+        ArrayList<Variable> vars = new ArrayList<>();
 
         for (Object objectArgument : node.getArgument())
         {
             if (!(objectArgument instanceof AArgument)) break;
+
             AArgument argument = (AArgument)objectArgument;
 
             String argumentName = argument.getIdentifier().getText().trim();
@@ -106,6 +115,7 @@ public class FirstAdapter extends DepthFirstAdapter
             if (argument.getValue().size() == 0)
             {
                 function.addArgument(argumentName, false, Variable.Type.NA);
+                vars.add(new Variable(Variable.Type.NA, argumentName, argument.getIdentifier().getLine()));
             }
             else
             {
@@ -114,31 +124,48 @@ public class FirstAdapter extends DepthFirstAdapter
                 if (value instanceof ANumberValue)
                 {
                     function.addArgument(argumentName, true, Variable.Type.INTEGER);
+                    vars.add(new Variable(Variable.Type.INTEGER, argumentName, argument.getIdentifier().getLine()));
                 }
                 else if (value instanceof AStringValue)
                 {
                     function.addArgument(argumentName, true, Variable.Type.STRING);
+                    vars.add(new Variable(Variable.Type.STRING, argumentName, argument.getIdentifier().getLine()));
                 }
                 else if (value instanceof ANoneValue)
                 {
                     function.addArgument(argumentName, true, Variable.Type.NONE);
+                    vars.add(new Variable(Variable.Type.NONE, argumentName, argument.getIdentifier().getLine()));
                 }
                 else
                 {
                     function.addArgument(argumentName, true, Variable.Type.NA); //TODO: Possible change of NA Type
+                    vars.add(new Variable(Variable.Type.NA, argumentName, argument.getIdentifier().getLine()));
                 }
             }
         }
 
-        if (!symbolTable.contains(function))
+        if (!hierarchicalSymbolTable.containsFunction(function))
         {
-            symbolTable.addFunction(function);
+            hierarchicalSymbolTable.addFunction(function);
+            hierarchicalSymbolTable.addScope(function.getID(), scopeID);
+            scopeID = function.getID();
+            for (Variable v : vars)
+            {
+                hierarchicalSymbolTable.addVariable(v, scopeID);
+            }
+            hierarchicalSymbolTable.functionDef.put(function, node);
         }
         else
         {
             ++errors;
-            System.err.println("Error " + errors + ": Function '" + function.getName() + "' at line:" + function.getPosition() + " has already been declared at line " + symbolTable.getFunction(function.getName(), function.getDefaultArgumentCount(), function.getNonDefaultArgumentCount()).getPosition());
+            System.err.println("Error " + errors + ": Function '" + function.getName() + "' at line:" + function.getPosition() + " has already been declared at line:" + hierarchicalSymbolTable.getFunction(function.getName(), function.getDefaultArgumentCount(), function.getNonDefaultArgumentCount()).getPosition());
         }
+    }
+
+    @Override
+    public void outAFunction(AFunction node)
+    {
+        scopeID = "global";
     }
 
     @Override
@@ -161,7 +188,7 @@ public class FirstAdapter extends DepthFirstAdapter
         String functionName = ((AFunction) parent).getIdentifier().getText().trim();
         int arguments = ((AFunction) parent).getArgument().size();
 
-        Function function = symbolTable.getFunction(functionName, arguments);
+        Function function = hierarchicalSymbolTable.getFunction(functionName, arguments);
 
         PExpression expression = node.getExpression();
 
@@ -188,18 +215,18 @@ public class FirstAdapter extends DepthFirstAdapter
                     String functionCallName = ((AFunctionCall) ((AFunctionValue) value).getFunctionCall()).getIdentifier().getText().trim();
                     int argumentNumber = ((AFunctionCall) ((AFunctionValue) value).getFunctionCall()).getExpression().size();
 
-                    if (symbolTable.contains(functionCallName, argumentNumber))
+                    if (hierarchicalSymbolTable.containsFunction(functionCallName, argumentNumber))
                     {
-                        function.setReturnType(symbolTable.getFunction(functionName, argumentNumber).getReturnType());
+                        function.setReturnType(hierarchicalSymbolTable.getFunction(functionName, argumentNumber).getReturnType());
                     }
                 }
             }
         }
         else if (expression instanceof AIdExpression)
         {
-            if (symbolTable.contains(((AIdExpression) expression).getIdentifier().getText().trim()))
+            if (hierarchicalSymbolTable.containsVariable(((AIdExpression) expression).getIdentifier().getText().trim(), scopeID))
             {
-                function.setReturnType(symbolTable.getVariable(((AIdExpression) expression).getIdentifier().getText().trim()).getType());
+                function.setReturnType(hierarchicalSymbolTable.getVariable(((AIdExpression) expression).getIdentifier().getText().trim(), scopeID).getType());
             }
         }
         else if (expression instanceof AFuncCallExpression)
@@ -209,11 +236,27 @@ public class FirstAdapter extends DepthFirstAdapter
                 String functionCallName = ((AFunctionCall) ((AFuncCallExpression) expression).getFunctionCall()).getIdentifier().getText().trim();
                 int argumentNumber = ((AFunctionCall) ((AFuncCallExpression) expression).getFunctionCall()).getExpression().size();
 
-                if (symbolTable.contains(functionCallName, argumentNumber))
+                if (hierarchicalSymbolTable.containsFunction(functionCallName, argumentNumber))
                 {
-                    function.setReturnType(symbolTable.getFunction(functionName, argumentNumber).getReturnType());
+                    function.setReturnType(hierarchicalSymbolTable.getFunction(functionName, argumentNumber).getReturnType());
                 }
             }
         }
+    }
+
+    @Override
+    public void inAForStatement(AForStatement node)
+    {
+        String name = node.getFirst().getText().trim();
+        if (!hierarchicalSymbolTable.containsVariable(name, scopeID))
+        {
+            Variable variable = new Variable(Variable.Type.NA, name, positions.getLine(node));
+            hierarchicalSymbolTable.addVariable(variable, scopeID);
+        }
+    }
+
+    public int getErrors()
+    {
+        return errors;
     }
 }

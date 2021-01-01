@@ -702,9 +702,9 @@ public class Lexer
     }
 
     Token new0(String text, int line, int pos) { return new TTab(text, line, pos); }
-    Token new1(String text, int line, int pos) { return new TNumber(text, line, pos); }
-    Token new2(String text, int line, int pos) { return new TString(text, line, pos); }
-    Token new3(String text, int line, int pos) { return new TComment(text, line, pos); }
+    Token new1(String text, int line, int pos) { return new TComment(text, line, pos); }
+    Token new2(String text, int line, int pos) { return new TNumber(text, line, pos); }
+    Token new3(String text, int line, int pos) { return new TString(text, line, pos); }
     Token new4(String text, int line, int pos) { return new TBlank(text, line, pos); }
     Token new5(int line, int pos) { return new TDef(line, pos); }
     Token new6(int line, int pos) { return new TPlus(line, pos); }
@@ -813,11 +813,11 @@ public class Lexer
             {},
             {},
             {{61, 61, 41}, },
-            {{0, 9, 42}, {11, 12, 42}, {14, 33, 42}, {34, 34, 43}, {35, 127, 42}, },
+            {{0, 9, 42}, {11, 12, 42}, {14, 33, 42}, {34, 34, 43}, {35, 38, 42}, {40, 127, 42}, },
             {{0, 9, 44}, {10, 10, 45}, {11, 12, 44}, {13, 13, 46}, {14, 127, 44}, },
             {},
             {{38, 38, 47}, },
-            {{0, 9, 48}, {11, 12, 48}, {14, 38, 48}, {39, 39, 49}, {40, 127, 48}, },
+            {{0, 9, 48}, {11, 12, 48}, {14, 33, 48}, {35, 38, 48}, {39, 39, 49}, {40, 127, 48}, },
             {},
             {},
             {{42, 42, 50}, },
@@ -850,13 +850,13 @@ public class Lexer
             {{48, 95, -26}, {97, 103, 60}, {104, 104, 78}, {105, 122, 60}, },
             {},
             {{0, 127, -8}, },
-            {{0, 127, -8}, },
+            {},
             {{0, 127, -9}, },
             {},
             {{10, 10, 79}, },
             {},
             {{0, 127, -12}, },
-            {{0, 127, -12}, },
+            {},
             {},
             {},
             {},
@@ -925,7 +925,7 @@ public class Lexer
     private static int[][] accept;
 /*  {
         // INITIAL
-        {-1, 0, 4, 4, 4, -1, -1, -1, 11, -1, -1, 13, 14, 9, 6, 17, 7, 42, 10, 1, 18, 23, 32, 24, 46, 46, 15, 16, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 20, -1, 2, -1, 3, 3, 12, -1, 2, 8, 21, 22, -1, 25, 19, 26, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 37, 44, 46, 46, 46, 46, 31, 46, 46, 46, 46, 46, 3, 1, 46, 30, 46, 5, 46, 39, 35, 36, 29, 46, 46, 46, 46, 46, 46, 45, 46, 46, 33, 46, 46, 27, 34, 46, 46, 28, 40, 46, 38, 43, 41, },
+        {-1, 0, 4, 4, 4, -1, -1, -1, 11, -1, -1, 13, 14, 9, 6, 17, 7, 42, 10, 2, 18, 23, 32, 24, 46, 46, 15, 16, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 20, -1, 3, -1, 1, 1, 12, -1, 3, 8, 21, 22, -1, 25, 19, 26, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 37, 44, 46, 46, 46, 46, 31, 46, 46, 46, 46, 46, 1, 2, 46, 30, 46, 5, 46, 39, 35, 36, 29, 46, 46, 46, 46, 46, 46, 45, 46, 46, 33, 46, 46, 27, 34, 46, 46, 28, 40, 46, 38, 43, 41, },
 
     };*/
 

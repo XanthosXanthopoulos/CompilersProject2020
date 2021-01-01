@@ -18,8 +18,12 @@ public class ParserTest1
       Start ast = parser.parse();
 
       SymbolTable symbolTable = new SymbolTable();
+      HierarchicalSymbolTable hierarchicalSymbolTable = new HierarchicalSymbolTable();
+      Positions positions = new Positions();
 
-      ast.apply(new FirstAdapter(symbolTable));
+      ast.apply(positions);
+      ast.apply(new FirstAdapter(positions, hierarchicalSymbolTable));
+      ast.apply(new SecondAdapter(0, positions, hierarchicalSymbolTable));
 
       //System.out.println(ast);
     }

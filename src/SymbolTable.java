@@ -1,4 +1,7 @@
+import minipython.node.AFunction;
+
 import java.util.HashMap;
+import java.util.Stack;
 
 public class SymbolTable
 {
@@ -6,10 +9,13 @@ public class SymbolTable
 
     private HashMap<String, Function> functions;
 
+    public HashMap<Function, AFunction> functionDef;
+
     public SymbolTable()
     {
         variables = new HashMap<>();
         functions = new HashMap<>();
+        functionDef = new HashMap<>();
     }
 
     public void addFunction(Function function)

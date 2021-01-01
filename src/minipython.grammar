@@ -11,18 +11,18 @@ Helpers
 	lf = 10;
 	space = 32;
 	eol = lf | cr | cr lf;
-
+    special = ''' | '"';
     letter = ['a' .. 'z'] | ['A' .. 'Z'] | '_';
     digit = ['0' .. '9'];
     not_eol = [character - [cr + lf]];
     alphanumerical = letter | digit;
-
+    strval = [character - [[[cr + lf] + '''] + '"']];
 
 Tokens
     tab = 9;
+    comment = '#' not_eol* eol ;
     number = digit+ | digit+ '.' digit+;
-    string = '"' not_eol* '"' | ''' not_eol* ''';
-    comment = '#' not_eol* eol;
+    string = '"' strval* '"' | ''' strval* ''';
     blank = space | lf | cr;
     def = 'def';
     plus = '+';
@@ -91,8 +91,10 @@ Productions
               | {sta5} tab* print expression_list{-> New statement.print([expression_list.expression])}
               | {sta6} tab* identifier operation_assign expression{-> New statement.assign(identifier, operation_assign, expression)}
               | {sta7} tab* identifier l_br [first]:expression r_br assign [second]:expression{-> New statement.array_assign(identifier, first, second)}
-              | {sta8} tab* assert expression_list{-> New statement.assert([expression_list.expression])}
+              | {sta8} tab* assert expression secondary_assert_expression?{-> New statement.assert([expression secondary_assert_expression.expression])}
               | {sta9} tab* function_call{-> New statement.function(function_call)};
+
+    secondary_assert_expression{-> expression} = comma expression{-> expression};
 
     operation_assign = {op1} assign{-> New operation_assign.assign()}
                      | {op2} minus_equal{-> New operation_assign.minus_assign()}
@@ -152,7 +154,7 @@ Productions
     value = {val1} identifier dot function_call{-> New value.function(identifier, function_call)}
           | {val2} minus? number{-> New value.number(minus, number)}
           | {val3} string{-> New value.string(string)}
-          | {val4} none{-> New value.none()};
+          | {val4} none{-> New value.none(none)};
 
     value_list{->value*} = {dual} [first]:value comma [second]:value{-> [first second]}
                          | {multiple} value_list comma value{-> [value_list.value value]};
@@ -209,4 +211,4 @@ Abstract Syntax Tree
     value = {function} identifier function_call
           | {number} minus? number
           | {string} string
-          | {none};
+          | {none} none;

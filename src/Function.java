@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Function
 {
@@ -8,15 +8,17 @@ public class Function
 
     private int position;
 
-    private ArrayList<Argument> argumentList;
+    private HashMap<String, Argument> argumentList;
 
     private int defaultArgumentCount;
 
     private int nonDefaultArgumentCount;
 
+    private boolean hasDefinition;
+
     public Function()
     {
-        argumentList = new ArrayList<>();
+        argumentList = new HashMap<>();
     }
 
     public String getName()
@@ -61,7 +63,7 @@ public class Function
 
     public void addArgument(String name, boolean hasDefault, Variable.Type type)
     {
-        argumentList.add(new Argument(name, hasDefault, type));
+        argumentList.put(name, new Argument(name, hasDefault, Variable.Type.NA, type));
 
         if (hasDefault) ++defaultArgumentCount;
         else ++nonDefaultArgumentCount;
@@ -69,12 +71,12 @@ public class Function
 
     public boolean containsArgument(String name)
     {
-        for (Argument argument : argumentList)
-        {
-            if (argument.name.equals(name)) return true;
-        }
+        return argumentList.containsKey(name);
+    }
 
-        return false;
+    public Argument getArgument(String name)
+    {
+        return argumentList.get(name);
     }
 
     @Override
@@ -91,7 +93,22 @@ public class Function
         return name.equals(f.name) && nonDefaultArgumentCount < (f.defaultArgumentCount + f.nonDefaultArgumentCount) && f.nonDefaultArgumentCount < (defaultArgumentCount + nonDefaultArgumentCount);
     }
 
-    private class Argument
+    public boolean isHasDefinition()
+    {
+        return hasDefinition;
+    }
+
+    public void setHasDefinition(boolean hasDefinition)
+    {
+        this.hasDefinition = hasDefinition;
+    }
+
+    public String getID()
+    {
+        return name + "-" + nonDefaultArgumentCount + ":" + (nonDefaultArgumentCount + defaultArgumentCount);
+    }
+
+    public static class Argument
     {
         private String name;
 
@@ -99,11 +116,43 @@ public class Function
 
         private Variable.Type type;
 
-        public Argument(String name, boolean hasDefault, Variable.Type type)
+        private Variable.Type defaultType;
+
+        public Argument(String name, boolean hasDefault, Variable.Type type, Variable.Type defaultType)
         {
             this.name = name;
             this.hasDefault = hasDefault;
             this.type = type;
+        }
+
+        public Variable.Type getType()
+        {
+            return type;
+        }
+
+        public void setType(Variable.Type type)
+        {
+            this.type = type;
+        }
+
+        public boolean isHasDefault()
+        {
+            return hasDefault;
+        }
+
+        public void setHasDefault(boolean hasDefault)
+        {
+            this.hasDefault = hasDefault;
+        }
+
+        public Variable.Type getDefaultType()
+        {
+            return defaultType;
+        }
+
+        public void setDefaultType(Variable.Type defaultType)
+        {
+            this.defaultType = defaultType;
         }
     }
 }

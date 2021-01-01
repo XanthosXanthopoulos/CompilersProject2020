@@ -328,17 +328,17 @@ public class AnalysisAdapter implements Analysis
         defaultCase(node);
     }
 
+    public void caseTComment(TComment node)
+    {
+        defaultCase(node);
+    }
+
     public void caseTNumber(TNumber node)
     {
         defaultCase(node);
     }
 
     public void caseTString(TString node)
-    {
-        defaultCase(node);
-    }
-
-    public void caseTComment(TComment node)
     {
         defaultCase(node);
     }

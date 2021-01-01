@@ -1125,6 +1125,10 @@ public class DepthFirstAdapter extends AnalysisAdapter
     public void caseANoneValue(ANoneValue node)
     {
         inANoneValue(node);
+        if(node.getNone() != null)
+        {
+            node.getNone().apply(this);
+        }
         outANoneValue(node);
     }
 }

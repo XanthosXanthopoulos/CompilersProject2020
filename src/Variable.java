@@ -1,6 +1,10 @@
+import java.util.Stack;
+
 public class Variable
 {
     private Type type;
+
+    private State state;
 
     private String name;
 
@@ -16,6 +20,14 @@ public class Variable
     public Variable()
     {
         this(Type.NA, "", -1);
+    }
+
+    public Variable(Variable v)
+    {
+        this.type = v.type;
+        this.name = v.name;
+        this.position = v.position;
+        this.state = State.UNDECLARED;
     }
 
     public Type getType()
@@ -48,6 +60,16 @@ public class Variable
         this.position = position;
     }
 
+    public State getState()
+    {
+        return state;
+    }
+
+    public void setState(State state)
+    {
+        this.state = state;
+    }
+
     public enum Type
     {
         STRING,
@@ -55,6 +77,12 @@ public class Variable
         NONE,
         ARRAY,
         NA
+    }
+
+    public enum State
+    {
+        DECLARED,
+        UNDECLARED
     }
 
     @Override

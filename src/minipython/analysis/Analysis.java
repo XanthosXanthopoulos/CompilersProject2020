@@ -65,9 +65,9 @@ public interface Analysis extends Switch
     void caseANoneValue(ANoneValue node);
 
     void caseTTab(TTab node);
+    void caseTComment(TComment node);
     void caseTNumber(TNumber node);
     void caseTString(TString node);
-    void caseTComment(TComment node);
     void caseTBlank(TBlank node);
     void caseTDef(TDef node);
     void caseTPlus(TPlus node);
