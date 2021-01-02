@@ -6,20 +6,9 @@ public class Function
 
     private Variable.Type returnType;
 
-    private int position;
-
-    private HashMap<String, Argument> argumentList;
-
     private int defaultArgumentCount;
 
     private int nonDefaultArgumentCount;
-
-    private boolean hasDefinition;
-
-    public Function()
-    {
-        argumentList = new HashMap<>();
-    }
 
     public String getName()
     {
@@ -41,16 +30,6 @@ public class Function
         this.returnType = returnType;
     }
 
-    public int getPosition()
-    {
-        return position;
-    }
-
-    public void setPosition(int position)
-    {
-        this.position = position;
-    }
-
     public int getDefaultArgumentCount()
     {
         return  defaultArgumentCount;
@@ -59,24 +38,6 @@ public class Function
     public int getNonDefaultArgumentCount()
     {
         return nonDefaultArgumentCount;
-    }
-
-    public void addArgument(String name, boolean hasDefault, Variable.Type type)
-    {
-        argumentList.put(name, new Argument(name, hasDefault, Variable.Type.NA, type));
-
-        if (hasDefault) ++defaultArgumentCount;
-        else ++nonDefaultArgumentCount;
-    }
-
-    public boolean containsArgument(String name)
-    {
-        return argumentList.containsKey(name);
-    }
-
-    public Argument getArgument(String name)
-    {
-        return argumentList.get(name);
     }
 
     @Override
@@ -93,19 +54,19 @@ public class Function
         return name.equals(f.name) && nonDefaultArgumentCount < (f.defaultArgumentCount + f.nonDefaultArgumentCount) && f.nonDefaultArgumentCount < (defaultArgumentCount + nonDefaultArgumentCount);
     }
 
-    public boolean isHasDefinition()
-    {
-        return hasDefinition;
-    }
-
-    public void setHasDefinition(boolean hasDefinition)
-    {
-        this.hasDefinition = hasDefinition;
-    }
-
     public String getID()
     {
         return name + "-" + nonDefaultArgumentCount + ":" + (nonDefaultArgumentCount + defaultArgumentCount);
+    }
+
+    public void setNonDefaultArgumentCount(int nonDefaultArgumentCount)
+    {
+        this.nonDefaultArgumentCount = nonDefaultArgumentCount;
+    }
+
+    public void setDefaultArgumentCount(int defaultArgumentCount)
+    {
+        this.defaultArgumentCount = defaultArgumentCount;
     }
 
     public static class Argument
@@ -123,36 +84,6 @@ public class Function
             this.name = name;
             this.hasDefault = hasDefault;
             this.type = type;
-        }
-
-        public Variable.Type getType()
-        {
-            return type;
-        }
-
-        public void setType(Variable.Type type)
-        {
-            this.type = type;
-        }
-
-        public boolean isHasDefault()
-        {
-            return hasDefault;
-        }
-
-        public void setHasDefault(boolean hasDefault)
-        {
-            this.hasDefault = hasDefault;
-        }
-
-        public Variable.Type getDefaultType()
-        {
-            return defaultType;
-        }
-
-        public void setDefaultType(Variable.Type defaultType)
-        {
-            this.defaultType = defaultType;
         }
     }
 }

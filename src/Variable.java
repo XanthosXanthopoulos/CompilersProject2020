@@ -2,7 +2,9 @@ import java.util.Stack;
 
 public class Variable
 {
-    private Type type;
+    private Stack<Type> type;
+
+    private Type defaultType;
 
     private State state;
 
@@ -12,9 +14,13 @@ public class Variable
 
     public Variable(Type type, String name, int position)
     {
-        this.type = type;
+        this.type = new Stack<>();
+
+        this.defaultType = type;
         this.name = name;
         this.position = position;
+
+        this.type.push(Type.NA);
     }
 
     public Variable()
@@ -22,22 +28,29 @@ public class Variable
         this(Type.NA, "", -1);
     }
 
-    public Variable(Variable v)
-    {
-        this.type = v.type;
-        this.name = v.name;
-        this.position = v.position;
-        this.state = State.UNDECLARED;
-    }
-
     public Type getType()
     {
-        return type;
+        return type.peek();
     }
 
     public void setType(Type type)
     {
-        this.type = type;
+        if (!this.type.empty())
+        {
+            this.type.pop();
+        }
+
+        this.type.push(type);
+    }
+
+    public void addType(Type type)
+    {
+        this.type.push(type);
+    }
+
+    public void removeType()
+    {
+        this.type.pop();
     }
 
     public String getName()
@@ -68,6 +81,16 @@ public class Variable
     public void setState(State state)
     {
         this.state = state;
+    }
+
+    public Type getDefaultType()
+    {
+        return defaultType;
+    }
+
+    public void setDefaultType(Type defaultType)
+    {
+        this.defaultType = defaultType;
     }
 
     public enum Type

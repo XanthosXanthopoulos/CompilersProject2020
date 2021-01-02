@@ -218,21 +218,27 @@ public class SecondAdapter extends DepthFirstAdapter
     @Override
     public void outAArrayExpression(AArrayExpression node)
     {
-        //TODO: Check for homogeneous or heterogeneous array
         setOut(node, Variable.Type.ARRAY);
     }
 
     @Override
     public void outAArrayAccessExpression(AArrayAccessExpression node)
     {
+        String name = node.getIdentifier().getText().trim();
+
+        if (!hierarchicalSymbolTable.containsVariable(name, scopeID) || hierarchicalSymbolTable.getVariable(name, scopeID).getState() != Variable.State.DECLARED)
+        {
+            ++errors;
+            System.err.println("Error " + errors + ": Variable " + name + " at [" + node.getIdentifier().getLine() + ":" + node.getIdentifier().getPos() + "] is undefined.");
+            printStacktrace();
+        }
+
         Variable.Type indexType = (Variable.Type) getOut(node.getExpression());
-        int line = node.getIdentifier().getLine();
-        int position = node.getIdentifier().getPos();
 
         if (indexType == Variable.Type.NONE || indexType == Variable.Type.ARRAY)
         {
             ++errors;
-            System.err.println("Error " + errors + ": Invalid array index type at [" + line + ":" + position + "]. Found index type is '"+ indexType.name() +"'.");
+            System.err.println("Error " + errors + ": Invalid array index type at [" + positions.getLine(node.getExpression()) + ":" + positions.getColumn(node.getExpression()) + "]. Found index type is '"+ indexType.name() +"'.");
             printStacktrace();
         }
         setOut(node, Variable.Type.NA);
@@ -349,14 +355,46 @@ public class SecondAdapter extends DepthFirstAdapter
                         String variableName = ((AArgument) object).getIdentifier().getText().trim();
                         Variable.Type type = (Variable.Type) getOut((Node)((AFunctionCall) functionCall).getExpression().get(i));
 
-                        hierarchicalSymbolTable.getVariable(variableName, functionScope).setType(type);
+                        hierarchicalSymbolTable.getVariable(variableName, functionScope).addType(type);
                     }
                 }
 
-                stacktrace.push(new Trace(functionName, positions.getLine(node), positions.getColumn(node)));
-                caseAFunction(functionNode);
-                stacktrace.pop();
-                setOut(node, getOut(functionNode));
+                for (int i = argumentNumber; i < function.getDefaultArgumentCount() + function.getNonDefaultArgumentCount(); ++i)
+                {
+                    Object object = functionNode.getArgument().get(i);
+
+                    if (object instanceof AArgument)
+                    {
+                        String variableName = ((AArgument) object).getIdentifier().getText().trim();
+
+                        Variable variable = hierarchicalSymbolTable.getVariable(variableName, functionScope);
+                        variable.addType(variable.getDefaultType());
+                    }
+                }
+
+                if (stacktrace.size() < 20)
+                {
+                    stacktrace.push(new Trace(functionName, positions.getLine(node), positions.getColumn(node)));
+                    caseAFunction(functionNode);
+                    stacktrace.pop();
+                    setOut(node, getOut(functionNode));
+                }
+                else
+                {
+                    setOut(node, Variable.Type.NA);
+                }
+
+                for (int i = 0; i < function.getDefaultArgumentCount() + function.getNonDefaultArgumentCount(); ++i)
+                {
+                    Object object = functionNode.getArgument().get(i);
+
+                    if (object instanceof AArgument)
+                    {
+                        String variableName = ((AArgument) object).getIdentifier().getText().trim();
+
+                        hierarchicalSymbolTable.getVariable(variableName, functionScope).removeType();
+                    }
+                }
             }
             else
             {
@@ -416,14 +454,46 @@ public class SecondAdapter extends DepthFirstAdapter
                         String variableName = ((AArgument) object).getIdentifier().getText().trim();
                         Variable.Type type = (Variable.Type) getOut((Node)((AFunctionCall) functionCall).getExpression().get(i));
 
-                        hierarchicalSymbolTable.getVariable(variableName, functionScope).setType(type);
+                        hierarchicalSymbolTable.getVariable(variableName, functionScope).addType(type);
                     }
                 }
 
-                stacktrace.push(new Trace(functionName, positions.getLine(node), positions.getColumn(node)));
-                caseAFunction(functionNode);
-                stacktrace.pop();
-                setOut(node, getOut(functionNode));
+                for (int i = argumentNumber; i < function.getDefaultArgumentCount() + function.getNonDefaultArgumentCount(); ++i)
+                {
+                    Object object = functionNode.getArgument().get(i);
+
+                    if (object instanceof AArgument)
+                    {
+                        String variableName = ((AArgument) object).getIdentifier().getText().trim();
+
+                        Variable variable = hierarchicalSymbolTable.getVariable(variableName, functionScope);
+                        variable.addType(variable.getDefaultType());
+                    }
+                }
+
+                if (stacktrace.size() < 20)
+                {
+                    stacktrace.push(new Trace(functionName, positions.getLine(node), positions.getColumn(node)));
+                    caseAFunction(functionNode);
+                    stacktrace.pop();
+                    setOut(node, getOut(functionNode));
+                }
+                else
+                {
+                    setOut(node, Variable.Type.NA);
+                }
+
+                for (int i = 0; i < function.getDefaultArgumentCount() + function.getNonDefaultArgumentCount(); ++i)
+                {
+                    Object object = functionNode.getArgument().get(i);
+
+                    if (object instanceof AArgument)
+                    {
+                        String variableName = ((AArgument) object).getIdentifier().getText().trim();
+
+                        hierarchicalSymbolTable.getVariable(variableName, functionScope).removeType();
+                    }
+                }
             }
             else
             {

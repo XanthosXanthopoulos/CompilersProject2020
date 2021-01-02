@@ -2,6 +2,7 @@ import minipython.node.*;
 import minipython.analysis.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class FirstAdapter extends DepthFirstAdapter
 {
@@ -26,61 +27,10 @@ public class FirstAdapter extends DepthFirstAdapter
 
         String variableName = identifier.getText().trim();
 
-        Variable variable;
-        if (hierarchicalSymbolTable.containsVariable(variableName, scopeID))
+        if (!hierarchicalSymbolTable.containsVariable(variableName, scopeID))
         {
-            variable = hierarchicalSymbolTable.getVariable(variableName, scopeID);
-        }
-        else
-        {
-            variable = new Variable(Variable.Type.NA, variableName, identifier.getLine());
+            Variable variable = new Variable(Variable.Type.NA, variableName, identifier.getLine());
             hierarchicalSymbolTable.addVariable(variable, scopeID);
-        }
-
-        PExpression expression = node.getExpression();
-
-        if (expression instanceof AValueExpression)
-        {
-            PValue value = ((AValueExpression) expression).getValue();
-
-            if (value instanceof AStringValue)
-            {
-                variable.setType(Variable.Type.STRING);
-            }
-            else if (value instanceof ANumberValue)
-            {
-                variable.setType(Variable.Type.INTEGER);
-            }
-            else if (value instanceof ANoneValue)
-            {
-                variable.setType(Variable.Type.NONE);
-            }
-            else if (value instanceof AFunctionValue)
-            {
-                PFunctionCall functionCall = ((AFunctionValue) value).getFunctionCall();
-
-                if (functionCall instanceof AFunctionCall)
-                {
-                    String functionName = ((AFunctionCall) functionCall).getIdentifier().getText().trim();
-                    int arguments = ((AFunctionCall) functionCall).getExpression().size();
-
-                    if (hierarchicalSymbolTable.containsFunction(functionName, arguments))
-                    {
-                        variable.setType(hierarchicalSymbolTable.getFunction(functionName, arguments).getReturnType());
-                    }
-                }
-            }
-        }
-        else if (expression instanceof AArrayExpression)
-        {
-            variable.setType(Variable.Type.ARRAY);
-        }
-        else if (expression instanceof AIdExpression)
-        {
-            if (hierarchicalSymbolTable.containsVariable(((AIdExpression) expression).getIdentifier().getText().trim(), scopeID))
-            {
-                variable.setType(hierarchicalSymbolTable.getVariable(((AIdExpression) expression).getIdentifier().getText().trim(), scopeID).getType());
-            }
         }
     }
 
@@ -93,10 +43,12 @@ public class FirstAdapter extends DepthFirstAdapter
         TIdentifier identifier = node.getIdentifier();
 
         function.setName(identifier.getText().trim());
-        function.setPosition(identifier.getLine());
         function.setReturnType(Variable.Type.NONE);
 
-        ArrayList<Variable> vars = new ArrayList<>();
+        HashMap<String, Variable> arguments = new HashMap<>();
+        int defaultArguments = 0;
+        int nonDefaultArguments = 0;
+
 
         for (Object objectArgument : node.getArgument())
         {
@@ -106,59 +58,63 @@ public class FirstAdapter extends DepthFirstAdapter
 
             String argumentName = argument.getIdentifier().getText().trim();
 
-            if (function.containsArgument(argumentName))
+            if (arguments.containsKey(argumentName))
             {
                 ++errors;
-                System.err.println("Error " + errors + ": Function argument '" + argumentName + "' at line:" + function.getPosition() + " has already been declared.");
+                System.err.println("Error " + errors + ": Function argument '" + argumentName + "' at [" + positions.getLine(argument) + ":" + positions.getColumn(argument) + " has already been declared.");
             }
 
             if (argument.getValue().size() == 0)
             {
-                function.addArgument(argumentName, false, Variable.Type.NA);
-                vars.add(new Variable(Variable.Type.NA, argumentName, argument.getIdentifier().getLine()));
+                arguments.put(argumentName, new Variable(Variable.Type.NA, argumentName, argument.getIdentifier().getLine()));
+                ++nonDefaultArguments;
             }
             else
             {
                 PValue value = (PValue)argument.getValue().get(0);
+                ++defaultArguments;
 
                 if (value instanceof ANumberValue)
                 {
-                    function.addArgument(argumentName, true, Variable.Type.INTEGER);
-                    vars.add(new Variable(Variable.Type.INTEGER, argumentName, argument.getIdentifier().getLine()));
+                    arguments.put(argumentName, new Variable(Variable.Type.INTEGER, argumentName, argument.getIdentifier().getLine()));
                 }
                 else if (value instanceof AStringValue)
                 {
-                    function.addArgument(argumentName, true, Variable.Type.STRING);
-                    vars.add(new Variable(Variable.Type.STRING, argumentName, argument.getIdentifier().getLine()));
+                    arguments.put(argumentName, new Variable(Variable.Type.STRING, argumentName, argument.getIdentifier().getLine()));
                 }
                 else if (value instanceof ANoneValue)
                 {
-                    function.addArgument(argumentName, true, Variable.Type.NONE);
-                    vars.add(new Variable(Variable.Type.NONE, argumentName, argument.getIdentifier().getLine()));
+                    arguments.put(argumentName, new Variable(Variable.Type.NONE, argumentName, argument.getIdentifier().getLine()));
                 }
                 else
                 {
-                    function.addArgument(argumentName, true, Variable.Type.NA); //TODO: Possible change of NA Type
-                    vars.add(new Variable(Variable.Type.NA, argumentName, argument.getIdentifier().getLine()));
+                    arguments.put(argumentName, new Variable(Variable.Type.NA, argumentName, argument.getIdentifier().getLine()));
                 }
             }
         }
+
+        function.setNonDefaultArgumentCount(nonDefaultArguments);
+        function.setDefaultArgumentCount(defaultArguments);
 
         if (!hierarchicalSymbolTable.containsFunction(function))
         {
             hierarchicalSymbolTable.addFunction(function);
             hierarchicalSymbolTable.addScope(function.getID(), scopeID);
             scopeID = function.getID();
-            for (Variable v : vars)
+
+            for (Variable variable : arguments.values())
             {
-                hierarchicalSymbolTable.addVariable(v, scopeID);
+                hierarchicalSymbolTable.addVariable(variable, scopeID);
             }
+
             hierarchicalSymbolTable.functionDef.put(function, node);
         }
         else
         {
+            Node functionDefinition = hierarchicalSymbolTable.functionDef.get(hierarchicalSymbolTable.getFunction(function.getName(), function.getDefaultArgumentCount(), function.getNonDefaultArgumentCount()));
+
             ++errors;
-            System.err.println("Error " + errors + ": Function '" + function.getName() + "' at line:" + function.getPosition() + " has already been declared at line:" + hierarchicalSymbolTable.getFunction(function.getName(), function.getDefaultArgumentCount(), function.getNonDefaultArgumentCount()).getPosition());
+            System.err.println("Error " + errors + ": Function '" + function.getName() + "' at [" + positions.getLine(node) + ":" + positions.getColumn(node) + "] has already been declared at [" + positions.getLine(functionDefinition) + ":" + positions.getColumn(functionDefinition) + "].");
         }
     }
 
