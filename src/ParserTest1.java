@@ -22,7 +22,7 @@ public class ParserTest1
             ast.apply(fa);
             ast.apply(new SecondAdapter(fa.getErrors(), positions, hierarchicalSymbolTable));
 
-            //System.out.println(ast);
+            System.out.println(ast);
         }
         catch (Exception e)
         {

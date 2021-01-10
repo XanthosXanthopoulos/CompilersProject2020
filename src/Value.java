@@ -16,7 +16,19 @@ public class Value<T>
     public Value(T value, boolean isNA)
     {
         this.value = new Stack<>();
-        this.value.push(value);
+
+        if (value instanceof Collection)
+        {
+            ArrayList<?> list = new ArrayList<>();
+
+            list.addAll((Collection)value);
+            this.value.push((T)list);
+        }
+        else
+        {
+            this.value.push(value);
+        }
+
         this.isNA = isNA;
     }
 

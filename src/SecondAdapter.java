@@ -73,7 +73,7 @@ public class SecondAdapter extends DepthFirstAdapter
     }
 
     @Override
-    public void outAPowExpression(APowExpression node)
+    public void outAPowExpression(APowExpression node) //Checked
     {
         Variable.Type lType = (Variable.Type) getOut(node.getFirst());
         Variable.Type rType = (Variable.Type) getOut(node.getSecond());
@@ -81,7 +81,7 @@ public class SecondAdapter extends DepthFirstAdapter
         if ((lType != Variable.Type.INTEGER && lType != Variable.Type.NA) || (rType != Variable.Type.INTEGER && rType != Variable.Type.NA))
         {
             ++errors;
-            System.err.println("Error " + errors + ": Incompatible data types for power operator at [" + positions.getLine(node) + ":" + positions.getColumn(node) + "]. Types found " + lType.name() + " and " + rType.name() + "." + iterationCounter.peek());
+            System.err.println("Error " + errors + ": Incompatible data types for power operator at [" + positions.getLine(node) + ":" + positions.getColumn(node) + "]. Types found '" + lType.name() + "' and '" + rType.name() + "'." + iterationCounter.peek());
             printStacktrace();
 
             values.put(node, new Value<>(true));
@@ -98,7 +98,7 @@ public class SecondAdapter extends DepthFirstAdapter
     }
 
     @Override
-    public void outAMultExpression(AMultExpression node)
+    public void outAMultExpression(AMultExpression node) //Checked
     {
         Variable.Type lType = (Variable.Type) getOut(node.getFirst());
         Variable.Type rType = (Variable.Type) getOut(node.getSecond());
@@ -106,7 +106,7 @@ public class SecondAdapter extends DepthFirstAdapter
         if ((lType != Variable.Type.INTEGER && lType != Variable.Type.NA) || (rType != Variable.Type.INTEGER && rType != Variable.Type.NA))
         {
             ++errors;
-            System.err.println("Error " + errors + ": Incompatible data types for multiplication operator at [" + positions.getLine(node) + ":" + positions.getColumn(node) + "]. Types found " + lType.name() + " and " + rType.name() + "." + iterationCounter.peek());
+            System.err.println("Error " + errors + ": Incompatible data types for multiplication operator at [" + positions.getLine(node) + ":" + positions.getColumn(node) + "]. Types found '" + lType.name() + "' and '" + rType.name() + "'." + iterationCounter.peek());
             printStacktrace();
 
             values.put(node, new Value<>(true));
@@ -123,7 +123,7 @@ public class SecondAdapter extends DepthFirstAdapter
     }
 
     @Override
-    public void outADivExpression(ADivExpression node)
+    public void outADivExpression(ADivExpression node) //Checked
     {
         Variable.Type lType = (Variable.Type) getOut(node.getFirst());
         Variable.Type rType = (Variable.Type) getOut(node.getSecond());
@@ -131,7 +131,7 @@ public class SecondAdapter extends DepthFirstAdapter
         if ((lType != Variable.Type.INTEGER && lType != Variable.Type.NA) || (rType != Variable.Type.INTEGER && rType != Variable.Type.NA))
         {
             ++errors;
-            System.err.println("Error " + errors + ": Incompatible data types for division operator at [" + positions.getLine(node) + ":" + positions.getColumn(node) + "]. Types found " + lType.name() + " and " + rType.name() + "." + iterationCounter.peek());
+            System.err.println("Error " + errors + ": Incompatible data types for division operator at [" + positions.getLine(node) + ":" + positions.getColumn(node) + "]. Types found '" + lType.name() + "' and '" + rType.name() + "'." + iterationCounter.peek());
             printStacktrace();
 
             values.put(node, new Value<>(true));
@@ -148,7 +148,7 @@ public class SecondAdapter extends DepthFirstAdapter
     }
 
     @Override
-    public void outAModExpression(AModExpression node)
+    public void outAModExpression(AModExpression node) //Checked
     {
         Variable.Type lType = (Variable.Type) getOut(node.getFirst());
         Variable.Type rType = (Variable.Type) getOut(node.getSecond());
@@ -156,7 +156,7 @@ public class SecondAdapter extends DepthFirstAdapter
         if ((lType != Variable.Type.INTEGER && lType != Variable.Type.NA) || (rType != Variable.Type.INTEGER && rType != Variable.Type.NA))
         {
             ++errors;
-            System.err.println("Error " + errors + ": Incompatible data types for modulo operator at [" + positions.getLine(node) + ":" + positions.getColumn(node) + "]. Types found " + lType.name() + " and " + rType.name() + "." + iterationCounter.peek());
+            System.err.println("Error " + errors + ": Incompatible data types for modulo operator at [" + positions.getLine(node) + ":" + positions.getColumn(node) + "]. Types found '" + lType.name() + "' and '" + rType.name() + "'." + iterationCounter.peek());
             printStacktrace();
 
             values.put(node, new Value<>(true));
@@ -173,7 +173,7 @@ public class SecondAdapter extends DepthFirstAdapter
     }
 
     @Override
-    public void outAMinusExpression(AMinusExpression node)
+    public void outAMinusExpression(AMinusExpression node) //Checked
     {
         Variable.Type lType = (Variable.Type) getOut(node.getFirst());
         Variable.Type rType = (Variable.Type) getOut(node.getSecond());
@@ -181,7 +181,7 @@ public class SecondAdapter extends DepthFirstAdapter
         if ((lType != Variable.Type.INTEGER && lType != Variable.Type.NA) || (rType != Variable.Type.INTEGER && rType != Variable.Type.NA))
         {
             ++errors;
-            System.err.println("Error " + errors + ": Incompatible data types subtraction operator at [" + positions.getLine(node) + ":" + positions.getColumn(node) + "]. Types found " + lType.name() + " and " + rType.name() + "." + iterationCounter.peek());
+            System.err.println("Error " + errors + ": Incompatible data types subtraction operator at [" + positions.getLine(node) + ":" + positions.getColumn(node) + "]. Types found '" + lType.name() + "' and '" + rType.name() + "'." + iterationCounter.peek());
             printStacktrace();
 
             values.put(node, new Value<>(true));
@@ -198,7 +198,7 @@ public class SecondAdapter extends DepthFirstAdapter
     }
 
     @Override
-    public void outAAddExpression(AAddExpression node)
+    public void outAAddExpression(AAddExpression node) //Checked
     {
         Variable.Type lType = (Variable.Type) getOut(node.getFirst());
         Variable.Type rType = (Variable.Type) getOut(node.getSecond());
@@ -217,7 +217,7 @@ public class SecondAdapter extends DepthFirstAdapter
         else
         {
             ++errors;
-            System.err.println("Error " + errors + ": Incompatible data types for addition operator at [" + positions.getLine(node) + ":" + positions.getColumn(node) + "]. Types found " + lType.name() + " and " + rType.name() + "." + iterationCounter.peek());
+            System.err.println("Error " + errors + ": Incompatible data types for addition operator at [" + positions.getLine(node) + ":" + positions.getColumn(node) + "]. Types found '" + lType.name() + "' and '" + rType.name() + "'." + iterationCounter.peek());
             printStacktrace();
 
             values.put(node, new Value<>(true));
@@ -226,55 +226,79 @@ public class SecondAdapter extends DepthFirstAdapter
     }
 
     @Override
-    public void outANumberValue(ANumberValue node)
+    public void outANumberValue(ANumberValue node) //Checked
     {
-        values.put(node, new Value<>(Integer.parseInt(node.getNumber().getText()), false));
+        if (node.getMinus() == null)
+        {
+            values.put(node, new Value<>(Integer.parseInt(node.getNumber().getText().trim()), false));
+        }
+        else
+        {
+            values.put(node, new Value<>(Integer.parseInt(node.getMinus().getText().trim() + node.getNumber().getText().trim()), false));
+        }
         setOut(node, Variable.Type.INTEGER);
     }
 
     @Override
-    public void outAStringValue(AStringValue node)
+    public void outAStringValue(AStringValue node) //Checked
     {
         values.put(node, new Value<>(node.getString().getText().trim().substring(1, node.getString().getText().trim().length() - 1), false));
         setOut(node, Variable.Type.STRING);
     }
 
     @Override
-    public void outANoneValue(ANoneValue node)
+    public void outANoneValue(ANoneValue node) //Checked
     {
         setOut(node, Variable.Type.NONE);
     }
 
     @Override
-    public void outAFunctionValue(AFunctionValue node)
+    public void outAFunctionValue(AFunctionValue node) //Checked
     {
         values.put(node, new Value<>(true));
         setOut(node, Variable.Type.NA);
     }
 
     @Override
-    public void outAValueExpression(AValueExpression node)
+    public void outAValueExpression(AValueExpression node) //Checked
     {
-        values.put(node, values.get(node.getValue()));
+        Value<?> value = values.get(node.getValue());
+        if (value != null)
+        {
+            values.put(node, new Value<>(value.getValue(), value.isNA()));
+        }
         setOut(node, getOut(node.getValue()));
     }
 
     @Override
-    public void outAParExpression(AParExpression node)
+    public void outAParExpression(AParExpression node) //Checked
     {
-        values.put(node, values.get(node.getExpression()));
+        Value<?> value = values.get(node.getExpression());
+        if (value != null)
+        {
+            values.put(node, new Value<>(value.getValue(), value.isNA()));
+        }
         setOut(node, getOut(node.getExpression()));
     }
 
     @Override
-    public void outAArrayExpression(AArrayExpression node)
+    public void outAArrayExpression(AArrayExpression node) //Checked
     {
         ArrayList<Value<?>> list = new ArrayList<>();
         for (Object object : node.getExpression())
         {
             if (object instanceof PExpression)
             {
-                list.add(values.get(object));
+                Value<?> value = values.get(object);
+
+                if (value != null)
+                {
+                    list.add(new Value<>(value.getValue(), value.isNA()));
+                }
+                else
+                {
+                    list.add(null);
+                }
             }
         }
 
@@ -314,7 +338,7 @@ public class SecondAdapter extends DepthFirstAdapter
             else
             {
                 Variable container = hierarchicalSymbolTable.getVariable(name, scopeID);
-                Variable.Type containerType = hierarchicalSymbolTable.getVariable(name, scopeID).getType();
+                Variable.Type containerType = container.getType();
                 int indexValue = (Integer)values.get(node.getExpression()).getValue();
 
                 if (containerType == Variable.Type.STRING)
@@ -385,7 +409,7 @@ public class SecondAdapter extends DepthFirstAdapter
     }
 
     @Override
-    public void outAMaxExpression(AMaxExpression node)
+    public void outAMaxExpression(AMaxExpression node) //Checked
     {
         Variable.Type type = Variable.Type.NA;
         Value<?> max = null;
@@ -422,12 +446,13 @@ public class SecondAdapter extends DepthFirstAdapter
         }
 
         if (max == null) max = new Value<>(true);
+
         values.put(node, max);
         setOut(node, type);
     }
 
     @Override
-    public void outAMinExpression(AMinExpression node)
+    public void outAMinExpression(AMinExpression node) //Checked
     {
         Variable.Type type = Variable.Type.NA;
         Value<?> min = null;
@@ -469,23 +494,26 @@ public class SecondAdapter extends DepthFirstAdapter
     }
 
     @Override
-    public void outAIdExpression(AIdExpression node)
+    public void outAIdExpression(AIdExpression node) //Checked
     {
         String name = node.getIdentifier().getText().trim();
-        int line = node.getIdentifier().getLine();
-        int position = node.getIdentifier().getPos();
 
         if (hierarchicalSymbolTable.containsVariable(name, scopeID) && hierarchicalSymbolTable.getVariable(name, scopeID).getState() == Variable.State.DECLARED)
         {
             Variable variable = hierarchicalSymbolTable.getVariable(name, scopeID);
+            Value<?> value = variable.getValue();
 
-            values.put(node, new Value<>(variable.getValue().getValue(), variable.getValue().isNA()));
+            if (value != null)
+            {
+                values.put(node, new Value<>(value.getValue(), value.isNA()));
+            }
+
             setOut(node, variable.getType());
         }
         else
         {
             ++errors;
-            System.err.println("Error " + errors + ": Variable " + name + " at [" + line + ":" + position + "] is undefined." + iterationCounter.peek());
+            System.err.println("Error " + errors + ": Variable " + name + " at [" + node.getIdentifier().getLine() + ":" + node.getIdentifier().getPos() + "] is undefined." + iterationCounter.peek());
             printStacktrace();
 
             values.put(node, new Value<>(true));
@@ -521,8 +549,16 @@ public class SecondAdapter extends DepthFirstAdapter
                         Variable.Type type = (Variable.Type) getOut((Node)((AFunctionCall) functionCall).getExpression().get(i));
                         Value<?> value = values.get(((AFunctionCall) functionCall).getExpression().get(i));
 
+                        if (value != null)
+                        {
+                            hierarchicalSymbolTable.getVariable(variableName, functionScope).addValue(new Value<>(value.getValue(), value.isNA()));
+                        }
+                        else
+                        {
+                            hierarchicalSymbolTable.getVariable(variableName, functionScope).addValue(null);
+                        }
+
                         hierarchicalSymbolTable.getVariable(variableName, functionScope).addType(type);
-                        hierarchicalSymbolTable.getVariable(variableName, functionScope).addValue(value);
                     }
                 }
 
@@ -535,7 +571,6 @@ public class SecondAdapter extends DepthFirstAdapter
                         String variableName = ((AArgument) object).getIdentifier().getText().trim();
 
                         Variable variable = hierarchicalSymbolTable.getVariable(variableName, functionScope);
-
 
                         variable.addValue(variable.getDefaultValue());
                         variable.addType(variable.getDefaultType());
@@ -589,7 +624,7 @@ public class SecondAdapter extends DepthFirstAdapter
     }
 
     @Override
-    public void outACompareComparison(ACompareComparison node)
+    public void outACompareComparison(ACompareComparison node) //Checked
     {
         Variable.Type lType = (Variable.Type) getOut(node.getFirst());
         Variable.Type rType = (Variable.Type) getOut(node.getSecond());
@@ -616,7 +651,8 @@ public class SecondAdapter extends DepthFirstAdapter
             ++errors;
             System.err.println("Error " + errors + ": Incompatible data types for comparison at [" + positions.getLine(node) + ":" + positions.getColumn(node) + "]. Types found " + lType.name() + " and " + rType.name() + "." + iterationCounter.peek());
             printStacktrace();
-            setOut(node, Variable.Type.NA);
+
+            setOut(node, false);
         }
     }
 
@@ -648,8 +684,16 @@ public class SecondAdapter extends DepthFirstAdapter
                         Variable.Type type = (Variable.Type) getOut((Node)((AFunctionCall) functionCall).getExpression().get(i));
                         Value<?> value = values.get(((AFunctionCall) functionCall).getExpression().get(i));
 
+                        if (value != null)
+                        {
+                            hierarchicalSymbolTable.getVariable(variableName, functionScope).addValue(new Value<>(value.getValue(), value.isNA()));
+                        }
+                        else
+                        {
+                            hierarchicalSymbolTable.getVariable(variableName, functionScope).addValue(null);
+                        }
+
                         hierarchicalSymbolTable.getVariable(variableName, functionScope).addType(type);
-                        hierarchicalSymbolTable.getVariable(variableName, functionScope).addValue(value);
                     }
                 }
 
@@ -714,27 +758,32 @@ public class SecondAdapter extends DepthFirstAdapter
     }
 
     @Override
-    public void outATypeExpression(ATypeExpression node)
+    public void outATypeExpression(ATypeExpression node) //Checked
     {
         setOut(node, Variable.Type.NONE);
     }
 
     @Override
-    public void outAOpenExpression(AOpenExpression node)
+    public void outAOpenExpression(AOpenExpression node) //Checked
     {
         setOut(node, Variable.Type.NONE);
     }
 
     @Override
-    public void outAAssignStatement(AAssignStatement node)
+    public void outAAssignStatement(AAssignStatement node) //Checked TODO: Need revision - Deep copy implementation needed
     {
         String name = node.getIdentifier().getText().trim();
 
         if (node.getOperationAssign() instanceof AAssignOperationAssign)
         {
             Variable variable = hierarchicalSymbolTable.getVariable(name, scopeID);
+            Value<?> value = values.get(node.getExpression());
+
             variable.setType((Variable.Type) getOut(node.getExpression()));
-            variable.setValue(values.get(node.getExpression()));
+            if (value != null)
+            {
+                variable.setValue(new Value<>(value.getValue(), value.isNA()));
+            }
             variable.setState(Variable.State.DECLARED);
         }
         else
@@ -781,6 +830,8 @@ public class SecondAdapter extends DepthFirstAdapter
                         System.err.println("Error " + errors + ": Invalid expression type at [" + positions.getLine(node.getExpression()) + ":" + positions.getColumn(node.getExpression()) + "]. Found '" + expressionType.name() + "', expected 'INTEGER'." + iterationCounter.peek());
                         printStacktrace();
                     }
+
+                    variable.setValue(new Value<>(true));
                 }
                 else
                 {
@@ -801,7 +852,7 @@ public class SecondAdapter extends DepthFirstAdapter
     }
 
     @Override
-    public void outAArrayAssignStatement(AArrayAssignStatement node)
+    public void outAArrayAssignStatement(AArrayAssignStatement node) //Checked
     {
         String name = node.getIdentifier().getText().trim();
 
@@ -826,17 +877,34 @@ public class SecondAdapter extends DepthFirstAdapter
                         ++errors;
                         System.err.println("Error " + errors + ": Index out of range at [" + node.getIdentifier().getLine() + ":" + node.getIdentifier().getPos() + "]." + iterationCounter.peek());
                         printStacktrace();
-
-                        //TODO: NA whole array??
                     }
-
-                    list.set(index, new Value<>(value.getValue(), value.isNA()));
+                    else
+                    {
+                        if (value != null)
+                        {
+                            list.set(index, new Value<>(value.getValue(), value.isNA()));
+                        }
+                        else
+                        {
+                            list.set(index, null);
+                        }
+                    }
                 }
                 else if (indexType == Variable.Type.NA)
                 {
-                    for (int i = 0; i < list.size(); ++i)
+                    if (value != null)
                     {
-                        list.set(i, new Value<>(value.getValue(), value.isNA()));
+                        for (int i = 0; i < list.size(); ++i)
+                        {
+                            list.set(i, new Value<>(value.getValue(), value.isNA()));
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < list.size(); ++i)
+                        {
+                            list.set(i, null);
+                        }
                     }
                 }
                 else
@@ -886,7 +954,22 @@ public class SecondAdapter extends DepthFirstAdapter
                 }
                 else if (indexType == Variable.Type.NA)
                 {
-                    if (valueType == Variable.Type.STRING || valueType == Variable.Type.NA)
+                    if (valueType == Variable.Type.STRING)
+                    {
+                        String letter = (String)values.get(node.getSecond()).getValue();
+
+                        if (letter.length() == 1)
+                        {
+                            variable.setValue(new Value<>(letter.repeat(word.length()), false));
+                        }
+                        else
+                        {
+                            ++errors;
+                            System.err.println("Error " + errors + ": Expected string length at [" + positions.getLine(node.getSecond()) + ":" + positions.getColumn(node.getSecond()) + "] is 1. String length found " + letter.length() + "." + iterationCounter.peek());
+                            printStacktrace();
+                        }
+                    }
+                    else if (valueType == Variable.Type.NA)
                     {
                         variable.setValue(new Value<>(true));
                     }
@@ -948,7 +1031,7 @@ public class SecondAdapter extends DepthFirstAdapter
     }
 
     @Override
-    public void outAFunction(AFunction node)
+    public void outAFunction(AFunction node) //Checked
     {
         currentFunctionDef.pop();
         scopeID = scopeStack.pop();
@@ -1009,13 +1092,13 @@ public class SecondAdapter extends DepthFirstAdapter
     }
 
     @Override
-    public void outANotComparison(ANotComparison node)
+    public void outANotComparison(ANotComparison node) //Checked
     {
         setOut(node, !(boolean)getOut(node.getComparison()));
     }
 
     @Override
-    public void outALogOpComparison(ALogOpComparison node)
+    public void outALogOpComparison(ALogOpComparison node) //Checked
     {
         if (node.getOperationLogical() instanceof AAndOperationLogical)
         {
@@ -1028,19 +1111,19 @@ public class SecondAdapter extends DepthFirstAdapter
     }
 
     @Override
-    public void outATrueComparison(ATrueComparison node)
+    public void outATrueComparison(ATrueComparison node) //Checked
     {
         setOut(node, true);
     }
 
     @Override
-    public void outAFalseComparison(AFalseComparison node)
+    public void outAFalseComparison(AFalseComparison node) //Checked
     {
         setOut(node, false);
     }
 
     @Override
-    public void caseAIfStatement(AIfStatement node)
+    public void caseAIfStatement(AIfStatement node) //Checked
     {
         inAIfStatement(node);
         if(node.getComparison() != null)
@@ -1055,7 +1138,7 @@ public class SecondAdapter extends DepthFirstAdapter
     }
 
     @Override
-    public void caseAWhileStatement(AWhileStatement node)
+    public void caseAWhileStatement(AWhileStatement node) //Checked
     {
         inAWhileStatement(node);
         if(node.getComparison() != null)
@@ -1070,6 +1153,11 @@ public class SecondAdapter extends DepthFirstAdapter
                 iterationCounter.push(" @ iteration " + (i + 1) + (i == 9 ? " ~ max search depth" : ""));
                 node.getStatement().apply(this);
                 iterationCounter.pop();
+
+                if(node.getComparison() != null)
+                {
+                    node.getComparison().apply(this);
+                }
             }
         }
         outAWhileStatement(node);
@@ -1144,7 +1232,6 @@ public class SecondAdapter extends DepthFirstAdapter
 
                     iterationCounter.push(" @ iteration " + i);
                     node.getStatement().apply(this);
-                    System.out.println(item);
                     iterationCounter.pop();
                 }
             }
