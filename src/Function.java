@@ -1,5 +1,3 @@
-import java.util.HashMap;
-
 public class Function
 {
     private String name;
@@ -67,23 +65,5 @@ public class Function
     public void setDefaultArgumentCount(int defaultArgumentCount)
     {
         this.defaultArgumentCount = defaultArgumentCount;
-    }
-
-    public static class Argument
-    {
-        private String name;
-
-        private boolean hasDefault;
-
-        private Variable.Type type;
-
-        private Variable.Type defaultType;
-
-        public Argument(String name, boolean hasDefault, Variable.Type type, Variable.Type defaultType)
-        {
-            this.name = name;
-            this.hasDefault = hasDefault;
-            this.type = type;
-        }
     }
 }

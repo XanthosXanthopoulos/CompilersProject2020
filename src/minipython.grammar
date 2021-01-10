@@ -10,7 +10,7 @@ Helpers
     cr = 13;
 	lf = 10;
 	space = 32;
-	eol = lf | cr | cr lf;
+	eol = cr lf | lf | cr;
     special = ''' | '"';
     letter = ['a' .. 'z'] | ['A' .. 'Z'] | '_';
     digit = ['0' .. '9'];
@@ -23,7 +23,7 @@ Tokens
     comment = '#' not_eol* eol ;
     number = digit+ | digit+ '.' digit+;
     string = '"' strval* '"' | ''' strval* ''';
-    blank = space | lf | cr;
+    blank = space | lf | cr | cr lf;
     def = 'def';
     plus = '+';
     minus = '-';

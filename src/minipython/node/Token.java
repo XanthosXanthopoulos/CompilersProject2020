@@ -2,6 +2,8 @@
 
 package minipython.node;
 
+import java.util.Objects;
+
 public abstract class Token extends Node
 {
     private String text;

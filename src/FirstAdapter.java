@@ -1,7 +1,6 @@
 import minipython.node.*;
 import minipython.analysis.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class FirstAdapter extends DepthFirstAdapter
@@ -29,7 +28,7 @@ public class FirstAdapter extends DepthFirstAdapter
 
         if (!hierarchicalSymbolTable.containsVariable(variableName, scopeID))
         {
-            Variable variable = new Variable(Variable.Type.NA, variableName, identifier.getLine());
+            Variable variable = new Variable(Variable.Type.NA, new Value<>(true), variableName, identifier.getLine());
             hierarchicalSymbolTable.addVariable(variable, scopeID);
         }
     }
@@ -66,7 +65,7 @@ public class FirstAdapter extends DepthFirstAdapter
 
             if (argument.getValue().size() == 0)
             {
-                arguments.put(argumentName, new Variable(Variable.Type.NA, argumentName, argument.getIdentifier().getLine()));
+                arguments.put(argumentName, new Variable(Variable.Type.NA, new Value<>(true), argumentName, argument.getIdentifier().getLine()));
                 ++nonDefaultArguments;
             }
             else
@@ -76,19 +75,21 @@ public class FirstAdapter extends DepthFirstAdapter
 
                 if (value instanceof ANumberValue)
                 {
-                    arguments.put(argumentName, new Variable(Variable.Type.INTEGER, argumentName, argument.getIdentifier().getLine()));
+                    Integer number = Integer.valueOf(((ANumberValue) value).getMinus().getText().trim() + ((ANumberValue) value).getNumber().getText().trim());
+
+                    arguments.put(argumentName, new Variable(Variable.Type.INTEGER, new Value<>(number, false), argumentName, argument.getIdentifier().getLine()));
                 }
                 else if (value instanceof AStringValue)
                 {
-                    arguments.put(argumentName, new Variable(Variable.Type.STRING, argumentName, argument.getIdentifier().getLine()));
+                    arguments.put(argumentName, new Variable(Variable.Type.STRING, new Value<>(((AStringValue) value).getString().getText().trim(), false), argumentName, argument.getIdentifier().getLine()));
                 }
                 else if (value instanceof ANoneValue)
                 {
-                    arguments.put(argumentName, new Variable(Variable.Type.NONE, argumentName, argument.getIdentifier().getLine()));
+                    arguments.put(argumentName, new Variable(Variable.Type.NONE, null, argumentName, argument.getIdentifier().getLine()));
                 }
                 else
                 {
-                    arguments.put(argumentName, new Variable(Variable.Type.NA, argumentName, argument.getIdentifier().getLine()));
+                    arguments.put(argumentName, new Variable(Variable.Type.NA, new Value<>(true), argumentName, argument.getIdentifier().getLine()));
                 }
             }
         }
@@ -206,7 +207,7 @@ public class FirstAdapter extends DepthFirstAdapter
         String name = node.getFirst().getText().trim();
         if (!hierarchicalSymbolTable.containsVariable(name, scopeID))
         {
-            Variable variable = new Variable(Variable.Type.NA, name, positions.getLine(node));
+            Variable variable = new Variable(Variable.Type.NA, new Value<>(true), name, positions.getLine(node));
             hierarchicalSymbolTable.addVariable(variable, scopeID);
         }
     }

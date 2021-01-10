@@ -4,7 +4,11 @@ public class Variable
 {
     private Stack<Type> type;
 
+    private Stack<Value<?>> value;
+
     private Type defaultType;
+
+    private Value<?> defaultValue;
 
     private State state;
 
@@ -12,20 +16,18 @@ public class Variable
 
     private int position;
 
-    public Variable(Type type, String name, int position)
+    public Variable(Type type, Value<?> value, String name, int position)
     {
         this.type = new Stack<>();
+        this.value = new Stack<>();
 
         this.defaultType = type;
+        this.defaultValue = value;
         this.name = name;
         this.position = position;
 
-        this.type.push(Type.NA);
-    }
-
-    public Variable()
-    {
-        this(Type.NA, "", -1);
+        this.type.push(type);
+        this.value.push(value);
     }
 
     public Type getType()
@@ -53,24 +55,34 @@ public class Variable
         this.type.pop();
     }
 
+    public Value<?> getValue()
+    {
+        return value.peek();
+    }
+
+    public void setValue(Value<?> value)
+    {
+        if (!this.value.isEmpty())
+        {
+            this.value.pop();
+        }
+
+        this.value.push(value);
+    }
+
+    public void addValue(Value<?> value)
+    {
+        this.value.push(value);
+    }
+
+    public void removeValue()
+    {
+        value.pop();
+    }
+
     public String getName()
     {
         return name;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-    public int getPosition()
-    {
-        return position;
-    }
-
-    public void setPosition(int position)
-    {
-        this.position = position;
     }
 
     public State getState()
@@ -88,9 +100,9 @@ public class Variable
         return defaultType;
     }
 
-    public void setDefaultType(Type defaultType)
+    public Value<?> getDefaultValue()
     {
-        this.defaultType = defaultType;
+        return defaultValue;
     }
 
     public enum Type

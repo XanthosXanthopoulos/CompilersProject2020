@@ -1,36 +1,33 @@
 import java.io.*;
+
 import minipython.lexer.Lexer;
 import minipython.parser.Parser;
 import minipython.node.Start;
 
 public class ParserTest1
 {
-  public static void main(String[] args)
-  {
-    try
+    public static void main(String[] args)
     {
-      Parser parser =
-        new Parser(
-        new Lexer(
-        new PushbackReader(
-        new FileReader(args[0].toString()), 1024)));
+        try
+        {
+            Parser parser = new Parser(new Lexer(new PushbackReader(new FileReader(args[0]), 1024)));
 
-      Start ast = parser.parse();
+            Start ast = parser.parse();
 
-      SymbolTable symbolTable = new SymbolTable();
-      HierarchicalSymbolTable hierarchicalSymbolTable = new HierarchicalSymbolTable();
-      Positions positions = new Positions();
+            HierarchicalSymbolTable hierarchicalSymbolTable = new HierarchicalSymbolTable();
+            Positions positions = new Positions();
 
-      ast.apply(positions);
-      ast.apply(new FirstAdapter(positions, hierarchicalSymbolTable));
-      ast.apply(new SecondAdapter(0, positions, hierarchicalSymbolTable));
+            ast.apply(positions);
+            FirstAdapter fa = new FirstAdapter(positions, hierarchicalSymbolTable);
+            ast.apply(fa);
+            ast.apply(new SecondAdapter(fa.getErrors(), positions, hierarchicalSymbolTable));
 
-      //System.out.println(ast);
+            //System.out.println(ast);
+        }
+        catch (Exception e)
+        {
+            System.err.println(e);
+        }
     }
-    catch (Exception e)
-    {
-      System.err.println(e);
-    }
-  }
 }
 
