@@ -189,15 +189,18 @@ def function_1(x):
 def function_1(x, y = 0, z = 0):
     return x + y + z
 
+def function_4(x, y = 0):
+    return x + y
+
+def function_5(x, y = 1):
+    return function_4(x, x) + function_2(x, y) * function_4(y)
+
 #Function tests
 
-#Should produce error at addition inside if
+#Should produce error because it is ambiguous
 a = function_1(1)
 
-if a == 1:
-    g = 1 + 'a'
-
-#Should produce error inside function_1. Return value is NA
+#Should produce error because it is ambiguous
 a = function_1(1, 'a')
 
 #Should produce error at addition inside if
@@ -206,14 +209,8 @@ a = function_2(1, 3)
 if a == 3:
     g = 1 + 'a'
 
-#Should produce error at addition inside if
+#Should produce error
 a = function_3(1, 5)
-
-if a == 27:
-    g = 1 + 'a'
-
-#Should produce error inside function_1 and function_2. Return value is NA
-a = function_3('a', 'b')
 
 #Should produce error for undefined function
 a = function()
@@ -223,6 +220,24 @@ a = function_1(1, 5, 3)
 
 if a == 9:
     g = 1 + 'a'
+
+#Should produce error at addition inside if
+a = function_5(1, 5)
+
+if a == 27:
+    g = 1 + 'a'
+
+#Should produce error inside function_1 and function_2. Return value is NA
+a = function_5('a', 'b')
+
+#Should produce error at addition inside if
+a = function_4(1)
+
+if a == 1:
+    g = 1 + 'a'
+
+#Should produce error inside function_1. Return value is NA
+a = function_4(1, 'a')
 
 #Max - Min tests
 
