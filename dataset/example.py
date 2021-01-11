@@ -96,10 +96,13 @@ if [1, 2, 'a'] < [1, 3]:
 if [1, 2] < [1, 2, 3]:
     g = 1 + "a"
 
-#Should produce error at condition line TODO: Fix comparison
+#Should produce error at condition line
 if ['a', 2] < [1, 2, 3]:
     g = 1 + "a"
 
+#Should produce error
+if ['a', 2] != [1, 2, 3]:
+    g = 1 + "a"
 
 #Should NOT produce error
 if a > object.function():
@@ -109,11 +112,11 @@ if a > object.function():
 if a > [1]:
     g = 1 + "a"
 
-#Should produce error at condition line TODO: Condition should evaluate true
+#Should produce error
 if a != [1]:
     g = 1 + "a"
 
-#Should NOT produce error TODO: Condition should evaluate false
+#Should NOT produce error
 if a == [1]:
     g = 1 + "a"
 
@@ -142,9 +145,10 @@ for i in c:
 for i in d:
     g = 1 + i
 
-#Should produce error at for line TODO: Should do one iteration with i being NA
+#Should produce error error at iteration 1
+#(iteration number not shown because it only runs one time)
 for i in f:
-    g = 1 + i
+    g = 1 + i + 'a'
 
 #While statement tests
 # Setup part - Begin

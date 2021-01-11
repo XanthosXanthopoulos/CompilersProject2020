@@ -188,14 +188,17 @@ public class Value<T>
         return new Value<>(true);
     }
 
-    public static <E, T> boolean Compare(Value<E> lhs, Value<T> rhs, ComparisonOperation operation)
+    public static <E, T> Value<Boolean> Compare(Value<E> lhs, Value<T> rhs, ComparisonOperation operation)
     {
+        if (lhs == null && rhs == null) return new Value<>(true, false);
+        else if (lhs == null || rhs == null) return new Value<>(false, false);
+
         if (!lhs.isNA && !rhs.isNA)
         {
             E lhs_val = lhs.value.peek();
             T rhs_val = rhs.value.peek();
 
-            int result = 0;
+            int result = 1;
 
             if (lhs_val instanceof Integer && rhs_val instanceof Integer)
             {
@@ -209,37 +212,56 @@ public class Value<T>
             {
                 int min = Math.min(((ArrayList<?>) lhs_val).size(), ((ArrayList<?>) rhs_val).size());
 
-                for (int i = 0; i < min && result == 0; ++i)
+                Value<Boolean> value;
+
+                for (int i = 0; i < min && result == 1; ++i)
                 {
-                    result = Compare(((ArrayList<Value>) lhs_val).get(i), ((ArrayList<Value>) rhs_val).get(i), operation) ? 1 : 0;
+                    value = Compare(((ArrayList<Value>) lhs_val).get(i), ((ArrayList<Value>) rhs_val).get(i), operation);
+
+                    if (value != null)
+                    {
+                        result = value.getValue() ? 0 : 1;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
 
-                if (result == 0)
+                if (result == 1)
                 {
-                    result = Compare(new Value<>(((ArrayList<?>) lhs_val).size(), false), new Value<>(((ArrayList<?>) rhs_val).size(), false), operation) ? 1 : 0;
+                    result = Compare(new Value<>(((ArrayList<?>) lhs_val).size(), false), new Value<>(((ArrayList<?>) rhs_val).size(), false), operation).getValue() ? 0 : 1;
                 }
 
-                return result == 1;
+                return new Value<>(result == 0, false);
+            }
+            else
+            {
+                if (operation == ComparisonOperation.NON_EQUAL)
+                {
+                    return new Value<>(true, false);
+                }
+                return null;
             }
 
             switch (operation)
             {
                 case EQUAL:
-                    return result == 0;
+                    return new Value<>(result == 0, false);
                 case GREATER:
-                    return result > 0;
+                    return new Value<>(result > 0, false);
                 case GREATER_EQUAL:
-                    return result >= 0;
+                    return new Value<>(result >= 0, false);
                 case LESS:
-                    return result < 0;
+                    return new Value<>(result < 0, false);
                 case LESS_EQUAL:
-                    return result <= 0;
+                    return new Value<>(result <= 0, false);
                 case NON_EQUAL:
-                    return result != 0;
+                    return new Value<>(result != 0, false);
             }
         }
 
-        return false;
+        return new Value<>(false, false);
     }
 
     public T getValue()

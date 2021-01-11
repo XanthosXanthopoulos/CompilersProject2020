@@ -630,30 +630,59 @@ public class SecondAdapter extends DepthFirstAdapter
         Variable.Type lType = (Variable.Type) getOut(node.getFirst());
         Variable.Type rType = (Variable.Type) getOut(node.getSecond());
 
-        if ((lType == rType && lType != Variable.Type.NONE) ||
-            (lType != Variable.Type.NONE && rType == Variable.Type.NA) ||
-            (lType == Variable.Type.NA && rType != Variable.Type.NONE))
+        Value.ComparisonOperation operation = null;
+        if (node.getComparisonSymbol() instanceof AEqComparisonSymbol) operation = Value.ComparisonOperation.EQUAL;
+        else if (node.getComparisonSymbol() instanceof AGrtEqComparisonSymbol) operation = Value.ComparisonOperation.GREATER_EQUAL;
+        else if (node.getComparisonSymbol() instanceof AGrtComparisonSymbol) operation = Value.ComparisonOperation.GREATER;
+        else if (node.getComparisonSymbol() instanceof ALessEqComparisonSymbol) operation = Value.ComparisonOperation.LESS_EQUAL;
+        else if (node.getComparisonSymbol() instanceof ALessComparisonSymbol) operation = Value.ComparisonOperation.LESS;
+        else if (node.getComparisonSymbol() instanceof ANEqComparisonSymbol) operation = Value.ComparisonOperation.NON_EQUAL;
+
+        Value<?> lhs = values.get(node.getFirst());
+        Value<?> rhs = values.get(node.getSecond());
+
+        if(operation == Value.ComparisonOperation.EQUAL || operation == Value.ComparisonOperation.NON_EQUAL)
         {
-            Value<?> lhs = values.get(node.getFirst());
-            Value<?> rhs = values.get(node.getSecond());
+            Value<Boolean> result = Value.Compare(lhs, rhs, operation);
 
-            Value.ComparisonOperation operation = null;
-            if (node.getComparisonSymbol() instanceof AEqComparisonSymbol) operation = Value.ComparisonOperation.EQUAL;
-            else if (node.getComparisonSymbol() instanceof AGrtEqComparisonSymbol) operation = Value.ComparisonOperation.GREATER_EQUAL;
-            else if (node.getComparisonSymbol() instanceof AGrtComparisonSymbol) operation = Value.ComparisonOperation.GREATER;
-            else if (node.getComparisonSymbol() instanceof ALessEqComparisonSymbol) operation = Value.ComparisonOperation.LESS_EQUAL;
-            else if (node.getComparisonSymbol() instanceof ALessComparisonSymbol) operation = Value.ComparisonOperation.LESS;
-            else if (node.getComparisonSymbol() instanceof ANEqComparisonSymbol) operation = Value.ComparisonOperation.NON_EQUAL;
-
-            setOut(node, Value.Compare(lhs, rhs, operation));
+            if (result == null)
+            {
+                setOut(node, false);
+            }
+            else
+            {
+                setOut(node, result.getValue());
+            }
         }
         else
         {
-            ++errors;
-            System.err.println("Error " + errors + ": Incompatible data types for comparison at [" + positions.getLine(node) + ":" + positions.getColumn(node) + "]. Types found " + lType.name() + " and " + rType.name() + "." + iterationCounter.peek());
-            printStacktrace();
+            if ((lType == rType && lType != Variable.Type.NONE) ||
+                    (lType != Variable.Type.NONE && rType == Variable.Type.NA) ||
+                    (lType == Variable.Type.NA && rType != Variable.Type.NONE))
+            {
+                Value<Boolean> result = Value.Compare(lhs, rhs, operation);
 
-            setOut(node, false);
+                if (result == null)
+                {
+                    ++errors;
+                    System.err.println("Error " + errors + ": Incompatible array data types for comparison at [" + positions.getLine(node) + ":" + positions.getColumn(node) + "]." + iterationCounter.peek());
+                    printStacktrace();
+
+                    setOut(node, false);
+                }
+                else
+                {
+                    setOut(node, result.getValue());
+                }
+            }
+            else
+            {
+                ++errors;
+                System.err.println("Error " + errors + ": Incompatible data types for comparison at [" + positions.getLine(node) + ":" + positions.getColumn(node) + "]. Types found " + lType.name() + " and " + rType.name() + "." + iterationCounter.peek());
+                printStacktrace();
+
+                setOut(node, false);
+            }
         }
     }
 
@@ -1075,6 +1104,10 @@ public class SecondAdapter extends DepthFirstAdapter
             {
                 iterator.setType(Variable.Type.STRING);
             }
+            else if (containerType == Variable.Type.NA)
+            {
+                iterator.setType(Variable.Type.NA);
+            }
             else
             {
                 ++errors;
@@ -1235,6 +1268,12 @@ public class SecondAdapter extends DepthFirstAdapter
                     node.getStatement().apply(this);
                     iterationCounter.pop();
                 }
+            }
+            else if (containerType == Variable.Type.NA)
+            {
+                hierarchicalSymbolTable.getVariable(node.getFirst().getText().trim(), scopeID).setType(Variable.Type.NA);
+                hierarchicalSymbolTable.getVariable(node.getFirst().getText().trim(), scopeID).setValue(new Value<>(true));
+                node.getStatement().apply(this);
             }
         }
 
