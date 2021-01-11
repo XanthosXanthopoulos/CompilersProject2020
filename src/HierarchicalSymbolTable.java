@@ -1,10 +1,11 @@
 import minipython.node.AFunction;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class HierarchicalSymbolTable
 {
-    private HashMap<String, Function> functions;
+    private HashMap<String, ArrayList<Function>> functions;
     private HashMap<String, Scope> scopes;
     public HashMap<Function, AFunction> functionDef;
 
@@ -25,10 +26,21 @@ public class HierarchicalSymbolTable
         return scopes.get(scopeID);
     }
 
+    public void resetScope(String scopeID)
+    {
+        for (Variable variable : scopes.get(scopeID).variables.values())
+        {
+            variable.setState(Variable.State.UNDECLARED);
+        }
+    }
+
     public void addScope(String scopeID, String parentID)
     {
-        Scope scope = new Scope(scopes.get(parentID));
-        scopes.put(scopeID, scope);
+        if (!scopes.containsKey(scopeID))
+        {
+            Scope scope = new Scope(scopes.get(parentID));
+            scopes.put(scopeID, scope);
+        }
     }
 
     public boolean containsFunction(String functionID, int argumentNumber)
@@ -46,16 +58,28 @@ public class HierarchicalSymbolTable
         return false;
     }
 
+    public boolean isAmbiguous(String functionID, int argumentNumber)
+    {
+        ArrayList<Function> list = functions.get(functionID + argumentNumber);
+
+        if (list != null)
+        {
+            return list.size() > 1;
+        }
+
+        return false;
+    }
+
     public Function getFunction(String functionID, int argumentNumber)
     {
-        return functions.get(functionID + argumentNumber);
+        return functions.get(functionID + argumentNumber).get(0);
     }
 
     public Function getFunction(String functionName, int nonDefaultArgumentNumber, int defaultArgumentNumber)
     {
         for (int i = nonDefaultArgumentNumber; i <= defaultArgumentNumber + nonDefaultArgumentNumber; ++i)
         {
-            if (functions.containsKey(functionName + i)) return functions.get(functionName + i);
+            if (functions.containsKey(functionName + i)) return functions.get(functionName + i).get(0);
         }
 
         return null;
@@ -65,7 +89,16 @@ public class HierarchicalSymbolTable
     {
         for (int i = function.getNonDefaultArgumentCount(); i <= function.getDefaultArgumentCount() + function.getNonDefaultArgumentCount(); ++i)
         {
-            functions.put(function.getName() + i, function);
+            if (functions.containsKey(function.getName() + i))
+            {
+                functions.get(function.getName() + i).add(function);
+            }
+            else
+            {
+                ArrayList<Function> list = new ArrayList<>();
+                list.add(function);
+                functions.put(function.getName() + i, list);
+            }
         }
     }
 

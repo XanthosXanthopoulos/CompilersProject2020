@@ -536,79 +536,91 @@ public class SecondAdapter extends DepthFirstAdapter
 
             if (hierarchicalSymbolTable.containsFunction(functionName, argumentNumber))
             {
-                Function function = hierarchicalSymbolTable.getFunction(functionName, argumentNumber);
-                String functionScope = function.getID();
-                AFunction functionNode = hierarchicalSymbolTable.functionDef.get(function);
-
-                for (int i = 0; i < argumentNumber; ++i)
+                if (hierarchicalSymbolTable.isAmbiguous(functionName, argumentNumber))
                 {
-                    Object object = functionNode.getArgument().get(i);
+                    ++errors;
+                    System.err.println("Error " + errors + ": Function call " + functionName + " at [" + line + ":" + position + "] is ambiguous." + iterationCounter.peek());
+                    printStacktrace();
 
-                    if (object instanceof AArgument)
-                    {
-                        String variableName = ((AArgument) object).getIdentifier().getText().trim();
-                        Variable.Type type = (Variable.Type) getOut((Node)((AFunctionCall) functionCall).getExpression().get(i));
-                        Value<?> value = values.get(((AFunctionCall) functionCall).getExpression().get(i));
-
-                        if (value != null)
-                        {
-                            hierarchicalSymbolTable.getVariable(variableName, functionScope).addValue(new Value<>(value.getValue(), value.isNA()));
-                        }
-                        else
-                        {
-                            hierarchicalSymbolTable.getVariable(variableName, functionScope).addValue(null);
-                        }
-
-                        hierarchicalSymbolTable.getVariable(variableName, functionScope).addType(type);
-                    }
-                }
-
-                for (int i = argumentNumber; i < function.getDefaultArgumentCount() + function.getNonDefaultArgumentCount(); ++i)
-                {
-                    Object object = functionNode.getArgument().get(i);
-
-                    if (object instanceof AArgument)
-                    {
-                        String variableName = ((AArgument) object).getIdentifier().getText().trim();
-
-                        Variable variable = hierarchicalSymbolTable.getVariable(variableName, functionScope);
-
-                        variable.addValue(variable.getDefaultValue());
-                        variable.addType(variable.getDefaultType());
-                    }
-                }
-
-                if (stacktrace.size() < 20)
-                {
-                    stacktrace.push(new Trace(functionName, positions.getLine(node), positions.getColumn(node)));
-                    caseAFunction(functionNode);
-                    stacktrace.pop();
-
-                    Value<?> value = values.get(functionNode);
-
-                    if (value != null)
-                    {
-                        values.put(node, new Value<>(value.getValue(), value.isNA()));
-                    }
-
-                    setOut(node, getOut(functionNode));
-                }
-                else
-                {
                     values.put(node, new Value<>(true));
                     setOut(node, Variable.Type.NA);
                 }
-
-                for (int i = 0; i < function.getDefaultArgumentCount() + function.getNonDefaultArgumentCount(); ++i)
+                else
                 {
-                    Object object = functionNode.getArgument().get(i);
+                    Function function = hierarchicalSymbolTable.getFunction(functionName, argumentNumber);
+                    String functionScope = function.getID();
+                    AFunction functionNode = hierarchicalSymbolTable.functionDef.get(function);
 
-                    if (object instanceof AArgument)
+                    for (int i = 0; i < argumentNumber; ++i)
                     {
-                        String variableName = ((AArgument) object).getIdentifier().getText().trim();
+                        Object object = functionNode.getArgument().get(i);
 
-                        hierarchicalSymbolTable.getVariable(variableName, functionScope).removeType();
-                        hierarchicalSymbolTable.getVariable(variableName, functionScope).removeValue();
+                        if (object instanceof AArgument)
+                        {
+                            String variableName = ((AArgument) object).getIdentifier().getText().trim();
+                            Variable.Type type = (Variable.Type) getOut((Node) ((AFunctionCall) functionCall).getExpression().get(i));
+                            Value<?> value = values.get(((AFunctionCall) functionCall).getExpression().get(i));
+
+                            if (value != null)
+                            {
+                                hierarchicalSymbolTable.getVariable(variableName, functionScope).addValue(new Value<>(value.getValue(), value.isNA()));
+                            }
+                            else
+                            {
+                                hierarchicalSymbolTable.getVariable(variableName, functionScope).addValue(null);
+                            }
+
+                            hierarchicalSymbolTable.getVariable(variableName, functionScope).addType(type);
+                        }
+                    }
+
+                    for (int i = argumentNumber; i < function.getDefaultArgumentCount() + function.getNonDefaultArgumentCount(); ++i)
+                    {
+                        Object object = functionNode.getArgument().get(i);
+
+                        if (object instanceof AArgument)
+                        {
+                            String variableName = ((AArgument) object).getIdentifier().getText().trim();
+
+                            Variable variable = hierarchicalSymbolTable.getVariable(variableName, functionScope);
+
+                            variable.addValue(variable.getDefaultValue());
+                            variable.addType(variable.getDefaultType());
+                        }
+                    }
+
+                    if (stacktrace.size() < 20)
+                    {
+                        stacktrace.push(new Trace(functionName, positions.getLine(node), positions.getColumn(node)));
+                        caseAFunction(functionNode);
+                        stacktrace.pop();
+
+                        Value<?> value = values.get(functionNode);
+
+                        if (value != null)
+                        {
+                            values.put(node, new Value<>(value.getValue(), value.isNA()));
+                        }
+
+                        setOut(node, getOut(functionNode));
+                    }
+                    else
+                    {
+                        values.put(node, new Value<>(true));
+                        setOut(node, Variable.Type.NA);
+                    }
+
+                    for (int i = 0; i < function.getDefaultArgumentCount() + function.getNonDefaultArgumentCount(); ++i)
+                    {
+                        Object object = functionNode.getArgument().get(i);
+
+                        if (object instanceof AArgument)
+                        {
+                            String variableName = ((AArgument) object).getIdentifier().getText().trim();
+
+                            hierarchicalSymbolTable.getVariable(variableName, functionScope).removeType();
+                            hierarchicalSymbolTable.getVariable(variableName, functionScope).removeValue();
+                        }
                     }
                 }
             }
@@ -700,78 +712,90 @@ public class SecondAdapter extends DepthFirstAdapter
 
             if (hierarchicalSymbolTable.containsFunction(functionName, argumentNumber))
             {
-                Function function = hierarchicalSymbolTable.getFunction(functionName, argumentNumber);
-                String functionScope = function.getID();
-                AFunction functionNode = hierarchicalSymbolTable.functionDef.get(function);
-
-                for (int i = 0; i < argumentNumber; ++i)
+                if (hierarchicalSymbolTable.isAmbiguous(functionName, argumentNumber))
                 {
-                    Object object = functionNode.getArgument().get(i);
+                    ++errors;
+                    System.err.println("Error " + errors + ": Function call " + functionName + " at [" + line + ":" + position + "] is ambiguous." + iterationCounter.peek());
+                    printStacktrace();
 
-                    if (object instanceof AArgument)
-                    {
-                        String variableName = ((AArgument) object).getIdentifier().getText().trim();
-                        Variable.Type type = (Variable.Type) getOut((Node)((AFunctionCall) functionCall).getExpression().get(i));
-                        Value<?> value = values.get(((AFunctionCall) functionCall).getExpression().get(i));
-
-                        if (value != null)
-                        {
-                            hierarchicalSymbolTable.getVariable(variableName, functionScope).addValue(new Value<>(value.getValue(), value.isNA()));
-                        }
-                        else
-                        {
-                            hierarchicalSymbolTable.getVariable(variableName, functionScope).addValue(null);
-                        }
-
-                        hierarchicalSymbolTable.getVariable(variableName, functionScope).addType(type);
-                    }
-                }
-
-                for (int i = argumentNumber; i < function.getDefaultArgumentCount() + function.getNonDefaultArgumentCount(); ++i)
-                {
-                    Object object = functionNode.getArgument().get(i);
-
-                    if (object instanceof AArgument)
-                    {
-                        String variableName = ((AArgument) object).getIdentifier().getText().trim();
-
-                        Variable variable = hierarchicalSymbolTable.getVariable(variableName, functionScope);
-
-                        variable.addValue(variable.getDefaultValue());
-                        variable.addType(variable.getDefaultType());
-                    }
-                }
-
-                if (stacktrace.size() < 20)
-                {
-                    stacktrace.push(new Trace(functionName, positions.getLine(node), positions.getColumn(node)));
-                    caseAFunction(functionNode);
-                    stacktrace.pop();
-
-                    Value<?> value = values.get(functionNode);
-
-                    if (value != null)
-                    {
-                        values.put(node, new Value<>(value.getValue(), value.isNA()));
-                    }
-
-                    setOut(node, getOut(functionNode));
+                    values.put(node, new Value<>(true));
+                    setOut(node, Variable.Type.NA);
                 }
                 else
                 {
-                    setOut(node, Variable.Type.NA);
-                }
+                    Function function = hierarchicalSymbolTable.getFunction(functionName, argumentNumber);
+                    String functionScope = function.getID();
+                    AFunction functionNode = hierarchicalSymbolTable.functionDef.get(function);
 
-                for (int i = 0; i < function.getDefaultArgumentCount() + function.getNonDefaultArgumentCount(); ++i)
-                {
-                    Object object = functionNode.getArgument().get(i);
-
-                    if (object instanceof AArgument)
+                    for (int i = 0; i < argumentNumber; ++i)
                     {
-                        String variableName = ((AArgument) object).getIdentifier().getText().trim();
+                        Object object = functionNode.getArgument().get(i);
 
-                        hierarchicalSymbolTable.getVariable(variableName, functionScope).removeValue();
-                        hierarchicalSymbolTable.getVariable(variableName, functionScope).removeType();
+                        if (object instanceof AArgument)
+                        {
+                            String variableName = ((AArgument) object).getIdentifier().getText().trim();
+                            Variable.Type type = (Variable.Type) getOut((Node) ((AFunctionCall) functionCall).getExpression().get(i));
+                            Value<?> value = values.get(((AFunctionCall) functionCall).getExpression().get(i));
+
+                            if (value != null)
+                            {
+                                hierarchicalSymbolTable.getVariable(variableName, functionScope).addValue(new Value<>(value.getValue(), value.isNA()));
+                            }
+                            else
+                            {
+                                hierarchicalSymbolTable.getVariable(variableName, functionScope).addValue(null);
+                            }
+
+                            hierarchicalSymbolTable.getVariable(variableName, functionScope).addType(type);
+                        }
+                    }
+
+                    for (int i = argumentNumber; i < function.getDefaultArgumentCount() + function.getNonDefaultArgumentCount(); ++i)
+                    {
+                        Object object = functionNode.getArgument().get(i);
+
+                        if (object instanceof AArgument)
+                        {
+                            String variableName = ((AArgument) object).getIdentifier().getText().trim();
+
+                            Variable variable = hierarchicalSymbolTable.getVariable(variableName, functionScope);
+
+                            variable.addValue(variable.getDefaultValue());
+                            variable.addType(variable.getDefaultType());
+                        }
+                    }
+
+                    if (stacktrace.size() < 20)
+                    {
+                        stacktrace.push(new Trace(functionName, positions.getLine(node), positions.getColumn(node)));
+                        caseAFunction(functionNode);
+                        stacktrace.pop();
+
+                        Value<?> value = values.get(functionNode);
+
+                        if (value != null)
+                        {
+                            values.put(node, new Value<>(value.getValue(), value.isNA()));
+                        }
+
+                        setOut(node, getOut(functionNode));
+                    }
+                    else
+                    {
+                        setOut(node, Variable.Type.NA);
+                    }
+
+                    for (int i = 0; i < function.getDefaultArgumentCount() + function.getNonDefaultArgumentCount(); ++i)
+                    {
+                        Object object = functionNode.getArgument().get(i);
+
+                        if (object instanceof AArgument)
+                        {
+                            String variableName = ((AArgument) object).getIdentifier().getText().trim();
+
+                            hierarchicalSymbolTable.getVariable(variableName, functionScope).removeValue();
+                            hierarchicalSymbolTable.getVariable(variableName, functionScope).removeType();
+                        }
                     }
                 }
             }
@@ -1063,6 +1087,14 @@ public class SecondAdapter extends DepthFirstAdapter
     @Override
     public void outAFunction(AFunction node) //Checked
     {
+        String name = node.getIdentifier().getText().trim();
+        int argumentNumber = node.getArgument().size();
+
+        Function function = hierarchicalSymbolTable.getFunction(name, argumentNumber);
+        scopeID = function.getID();
+
+        hierarchicalSymbolTable.resetScope(scopeID);
+
         currentFunctionDef.pop();
         scopeID = scopeStack.pop();
     }

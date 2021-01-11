@@ -105,27 +105,25 @@ public class FirstAdapter extends DepthFirstAdapter
         function.setNonDefaultArgumentCount(nonDefaultArguments);
         function.setDefaultArgumentCount(defaultArguments);
 
-        if (!hierarchicalSymbolTable.containsFunction(function))
-        {
-            hierarchicalSymbolTable.addFunction(function);
-            hierarchicalSymbolTable.addScope(function.getID(), scopeID);
-            scopeID = function.getID();
-
-            for (Variable variable : arguments.values())
-            {
-                hierarchicalSymbolTable.addVariable(variable, scopeID);
-            }
-
-            hierarchicalSymbolTable.functionDef.put(function, node);
-        }
-        else
+        if (hierarchicalSymbolTable.containsFunction(function))
         {
             Node functionDefinition = hierarchicalSymbolTable.functionDef.get(hierarchicalSymbolTable.getFunction(function.getName(), function.getDefaultArgumentCount(), function.getNonDefaultArgumentCount()));
 
             ++errors;
             System.err.println("Error " + errors + ": Function '" + function.getName() + "' at [" + positions.getLine(node) + ":" + positions.getColumn(node) + "] has already been declared at [" + positions.getLine(functionDefinition) + ":" + positions.getColumn(functionDefinition) + "].");
-            ((AGoal)(node.parent()).parent()).getAction().remove(node.parent());
+            //((AGoal)(node.parent()).parent()).getAction().remove(node.parent());
         }
+
+        hierarchicalSymbolTable.addFunction(function);
+        hierarchicalSymbolTable.addScope(function.getID(), scopeID);
+        scopeID = function.getID();
+
+        for (Variable variable : arguments.values())
+        {
+            hierarchicalSymbolTable.addVariable(variable, scopeID);
+        }
+
+        hierarchicalSymbolTable.functionDef.put(function, node);
     }
 
     @Override

@@ -187,7 +187,7 @@ def function_1(x):
 #Duplicate function is discarded at second pass.
 #No check are performed since the function itself should not exist
 def function_1(x, y = 0, z = 0):
-    return 1 + a
+    return x + y + z
 
 #Function tests
 
@@ -214,6 +214,15 @@ if a == 27:
 
 #Should produce error inside function_1 and function_2. Return value is NA
 a = function_3('a', 'b')
+
+#Should produce error for undefined function
+a = function()
+
+#Should produce error at addition inside if
+a = function_1(1, 5, 3)
+
+if a == 9:
+    g = 1 + 'a'
 
 #Max - Min tests
 
