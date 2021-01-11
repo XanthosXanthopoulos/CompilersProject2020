@@ -75,7 +75,15 @@ public class FirstAdapter extends DepthFirstAdapter
 
                 if (value instanceof ANumberValue)
                 {
-                    Integer number = Integer.valueOf(((ANumberValue) value).getMinus().getText().trim() + ((ANumberValue) value).getNumber().getText().trim());
+                    Integer number;
+                    if (((ANumberValue) value).getMinus() == null)
+                    {
+                        number = Integer.valueOf(((ANumberValue) value).getNumber().getText().trim());
+                    }
+                    else
+                    {
+                        number = Integer.valueOf(((ANumberValue) value).getMinus().getText().trim() + ((ANumberValue) value).getNumber().getText().trim());
+                    }
 
                     arguments.put(argumentName, new Variable(Variable.Type.INTEGER, new Value<>(number, false), argumentName, argument.getIdentifier().getLine()));
                 }
@@ -116,6 +124,7 @@ public class FirstAdapter extends DepthFirstAdapter
 
             ++errors;
             System.err.println("Error " + errors + ": Function '" + function.getName() + "' at [" + positions.getLine(node) + ":" + positions.getColumn(node) + "] has already been declared at [" + positions.getLine(functionDefinition) + ":" + positions.getColumn(functionDefinition) + "].");
+            ((AGoal)(node.parent()).parent()).getAction().remove(node.parent());
         }
     }
 

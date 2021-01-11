@@ -77,7 +77,7 @@ public class Value<T>
 
             if (lhs_val instanceof Integer && rhs_val instanceof Integer)
             {
-                return new Value<>((int)lhs_val - (int)rhs_val, true);
+                return new Value<>((int)lhs_val - (int)rhs_val, false);
             }
         }
 
@@ -125,7 +125,7 @@ public class Value<T>
 
             if (lhs_val instanceof Integer && rhs_val instanceof Integer)
             {
-                return new Value<>((int) lhs_val % (int) rhs_val, true);
+                return new Value<>((int) lhs_val % (int) rhs_val, false);
             }
         }
 
@@ -141,7 +141,7 @@ public class Value<T>
 
             if (lhs_val instanceof Integer && rhs_val instanceof Integer)
             {
-                return new Value<>((int) Math.pow((int)lhs_val, (int)rhs_val), true);
+                return new Value<>((int) Math.pow((int)lhs_val, (int)rhs_val), false);
             }
         }
 
@@ -181,7 +181,7 @@ public class Value<T>
             }
             else if (lhs_val instanceof String && rhs_val instanceof String)
             {
-                return new Value<>(((String) lhs_val).compareTo((String)rhs_val) < 0 ? lhs : rhs, false);
+                return new Value<>(((String) lhs_val).compareTo((String)rhs_val) < 0 ? lhs_val : rhs_val, false);
             }
         }
 
@@ -214,7 +214,10 @@ public class Value<T>
                     result = Compare(((ArrayList<Value>) lhs_val).get(i), ((ArrayList<Value>) rhs_val).get(i), operation) ? 1 : 0;
                 }
 
-                result = Compare(new Value<>(((ArrayList<?>) lhs_val).size(), false), new Value<>(((ArrayList<?>) rhs_val).size(), false), operation) ? 1 : 0;
+                if (result == 0)
+                {
+                    result = Compare(new Value<>(((ArrayList<?>) lhs_val).size(), false), new Value<>(((ArrayList<?>) rhs_val).size(), false), operation) ? 1 : 0;
+                }
 
                 return result == 1;
             }
@@ -236,7 +239,7 @@ public class Value<T>
             }
         }
 
-        return true;
+        return false;
     }
 
     public T getValue()

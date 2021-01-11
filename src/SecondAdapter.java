@@ -35,9 +35,9 @@ public class SecondAdapter extends DepthFirstAdapter
     private Stack<String> scopeStack;
     private Stack<Trace> stacktrace;
     private Stack<String> iterationCounter;
-
     private HashMap<Node, Value<?>> values;
 
+    private boolean parseDefinition = true;
     private int errors;
 
     private Variable.Type common(Variable.Type lType, Variable.Type rType)
@@ -482,6 +482,7 @@ public class SecondAdapter extends DepthFirstAdapter
                 }
                 else
                 {
+                    Value<?> val = values.get(object);
                     min = Value.Min(min, values.get(object));
                 }
                 type = common(type, argType);
@@ -1188,7 +1189,7 @@ public class SecondAdapter extends DepthFirstAdapter
         {
             if (containerType == Variable.Type.STRING)
             {
-                String value = (String) values.get(node.getSecond()).getValue();
+                String value = (String) hierarchicalSymbolTable.getVariable(node.getSecond().getText().trim(), scopeID).getValue().getValue();
                 for (int i = 0; i < value.length(); ++i)
                 {
                     values.put(node.getFirst(), new Value<>(value.substring(i, i + 1), false));
