@@ -1,10 +1,7 @@
 import minipython.analysis.*;
 import minipython.node.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Stack;
+import java.util.*;
 
 public class SecondAdapter extends DepthFirstAdapter
 {
@@ -1065,7 +1062,23 @@ public class SecondAdapter extends DepthFirstAdapter
         String name = node.getIdentifier().getText().trim();
         int argumentNumber = node.getArgument().size();
 
-        Function function = hierarchicalSymbolTable.getFunction(name, argumentNumber);
+        Function function = null;
+
+        if (hierarchicalSymbolTable.isAmbiguous(name, argumentNumber))
+        {
+            for (Map.Entry<Function, AFunction> entry : hierarchicalSymbolTable.functionDef.entrySet())
+            {
+                if (entry.getValue().equals(node))
+                {
+                    function = entry.getKey();
+                    break;
+                }
+            }
+        }
+        else
+        {
+            function = hierarchicalSymbolTable.getFunction(name, argumentNumber);
+        }
 
         scopeStack.push(scopeID);
         scopeID = function.getID();

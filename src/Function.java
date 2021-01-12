@@ -1,3 +1,5 @@
+import java.util.Stack;
+
 public class Function
 {
     private String name;
@@ -7,6 +9,8 @@ public class Function
     private int defaultArgumentCount;
 
     private int nonDefaultArgumentCount;
+
+    private Stack<Variable.Type> defaultTypes;
 
     public String getName()
     {
@@ -38,6 +42,11 @@ public class Function
         return nonDefaultArgumentCount;
     }
 
+    public Function()
+    {
+        defaultTypes = new Stack<>();
+    }
+
     @Override
     public boolean equals(Object obj)
     {
@@ -54,7 +63,12 @@ public class Function
 
     public String getID()
     {
-        return name + "-" + nonDefaultArgumentCount + ":" + (nonDefaultArgumentCount + defaultArgumentCount);
+        StringBuilder ID = new StringBuilder(name + "-" + nonDefaultArgumentCount + ":" + (nonDefaultArgumentCount + defaultArgumentCount));
+        for (Variable.Type type : defaultTypes)
+        {
+            ID.append(" ").append(type.name());
+        }
+        return ID.toString();
     }
 
     public void setNonDefaultArgumentCount(int nonDefaultArgumentCount)
@@ -65,5 +79,10 @@ public class Function
     public void setDefaultArgumentCount(int defaultArgumentCount)
     {
         this.defaultArgumentCount = defaultArgumentCount;
+    }
+
+    public void addDefaultType(Variable.Type type)
+    {
+        defaultTypes.push(type);
     }
 }

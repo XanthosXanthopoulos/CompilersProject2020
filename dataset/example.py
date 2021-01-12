@@ -270,3 +270,9 @@ a = max('a', 'banana', '32')
 
 if a == "banana":
     g = 1 + 'a'
+
+def fun(a = 0, b = 0):
+    return a + b
+
+def fun(a = "a", b = 5):
+    return a + b

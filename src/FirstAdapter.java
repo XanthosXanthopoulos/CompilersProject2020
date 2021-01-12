@@ -86,18 +86,22 @@ public class FirstAdapter extends DepthFirstAdapter
                     }
 
                     arguments.put(argumentName, new Variable(Variable.Type.INTEGER, new Value<>(number, false), argumentName, argument.getIdentifier().getLine()));
+                    function.addDefaultType(Variable.Type.INTEGER);
                 }
                 else if (value instanceof AStringValue)
                 {
                     arguments.put(argumentName, new Variable(Variable.Type.STRING, new Value<>(((AStringValue) value).getString().getText().trim(), false), argumentName, argument.getIdentifier().getLine()));
+                    function.addDefaultType(Variable.Type.STRING);
                 }
                 else if (value instanceof ANoneValue)
                 {
                     arguments.put(argumentName, new Variable(Variable.Type.NONE, null, argumentName, argument.getIdentifier().getLine()));
+                    function.addDefaultType(Variable.Type.NONE);
                 }
                 else
                 {
                     arguments.put(argumentName, new Variable(Variable.Type.NA, new Value<>(true), argumentName, argument.getIdentifier().getLine()));
+                    function.addDefaultType(Variable.Type.NA);
                 }
             }
         }
